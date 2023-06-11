@@ -14,5 +14,9 @@ app = Flask(__name__)           #Para saber si esta siendo ejecutando desde un a
 def Index():
     return render_template("index.html")
 
+@app.route("/prueba")
+def Prueba():
+    return render_template("prueba.html")
+
 if (__name__ == "__main__"):    #Modo desarrollo. (Usar solo en desarrollo, desabilitar en produccion)
     app.run(debug=True)
