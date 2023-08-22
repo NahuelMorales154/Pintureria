@@ -3,10 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Pintureria App</title>
 </head>
 <body>
+    <div class="topBar" style="max-height: 10vh; display: flex; align-items: center; justify-content: center; border-bottom: solid 2px #c1c1c1;">
+        <a href="{{ url_for('Index') }}">
+            <img src="../static/images/logo_500x500.png" alt="Logo Pintureria Pehuajo" style="width: auto; height: 70px;">
+        </a>
+        <h1 style="font-family: 'Roboto', sans-serif; padding-left: 10px; color: #DC3A51;">Pintureria Pehuajo</h1>
+    </div>
     {% block body %}
     {% endblock %}
+    <div class="footer" style="display: flex; height: 4.5vh; align-items: center; justify-content: center; border-top: solid 2px #c1c1c1;">
+        <a href="{{ url_for('Index') }}" style="text-decoration: none;">
+            <p style="font-family: 'Roboto', sans-serif; padding: 0; margin: auto; color: #DC3A51;">Pintureria Pehuajo</p>
+        </a>
+    </div>
 </body>
 </html>

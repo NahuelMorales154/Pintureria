@@ -1,0 +1,51 @@
+/*
+    azul: #2142B5
+    rojo: #DC3A51
+*/
+body{
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.container{
+    display: grid;
+    grid-template-columns: 25% auto;
+    height: 85vh;
+}
+
+.container > div > div{
+    display: flex;
+    flex-direction: column;
+}
+
+.navBar{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: solid 2px #c1c1c1;
+}
+
+.navBar h2{
+    font-family: 'Roboto', sans-serif;
+    color: #DC3A51;
+    border-bottom: solid 3px #000;
+    width: 80%;
+    margin: 5px auto;
+    padding-bottom: 5px;
+    text-align: left;
+}
+
+.navBar a{
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    color: #000;
+    font-weight: 600;
+    border: solid 2px #000;
+    border-radius: 30px;
+    width: 70%;
+    margin: 5px auto;
+    padding: 5px 0;
+    text-align: center;
+}
