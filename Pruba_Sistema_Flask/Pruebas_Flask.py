@@ -111,6 +111,22 @@ def delete_product(id):
     flash('Producto eliminado satisfactoriamente')
     return redirect(url_for('Productos'))
 
+#-------------------- Filtro--------------------#
+@app.route("/filter", methods=['POST'])
+def filter():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        tipo = request.form['tipo']
+        cantidad = request.form['cantidad']
+        precio = request.form['precio']
+        #consulta filter
+        cur = mysql.connection.cursor()
+        cur.execute('INSERT INTO productos (nombre, tipo, cantidad, precio) VALUES (%s, %s ,%s ,%s)', (nombre, tipo, cantidad, precio))
+        mysql.connection.commit()
+        #mensaje
+        flash('Producto agregado satisfactoriamente')
+    return redirect(url_for('Productos'))
+
 #Modo desarrollo. (Usar solo en desarrollo, desabilitar en produccion)
 if (__name__ == "__main__"):
     app.run(port = 3000, debug=True)

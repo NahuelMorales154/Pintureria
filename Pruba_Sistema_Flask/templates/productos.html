@@ -4,6 +4,7 @@
     <div class="container">
         <div class="navBar">
             <div class="col1" style="margin-top: 10px;">
+                <!-- Formulario de producto -->
                 <form action="/add_product" method="POST">
 
                     <input type="text" name="nombre" placeholder="Nombre">
@@ -18,6 +19,7 @@
                     <button type="submit">Guardar</button>
                 
                 </form>
+                <!-- Mensaje de modificacion -->
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 {% for message in messages %}
@@ -31,8 +33,23 @@
                 <a href="{{ url_for('Index') }}">Volver</a>
             </div>
         </div>
+        <!-- Tabla de producto -->
         <div class="containerTable">
             <h1>Productos</h1>
+            <form action="/filter" method="POST">
+
+                <input type="text" name="nombre" placeholder="Nombre">
+                <select name="tipo" id="tipo">
+                    <option value="">--seleccionar una opcion--</option>
+                    <option value="Pintura">Pintura</option>
+                    <option value="Ferreteria">Ferreteria</option>
+                    <option value="Otros">Otros</option>
+                </select>
+                <input type="number" name="cantidad" placeholder="Cantidad">
+                <input type="number" name="precio" placeholder="$0.00">
+                <button type="submit">Buscar</button>
+            
+            </form>
             <table>
                 <thead>
                     <tr>
