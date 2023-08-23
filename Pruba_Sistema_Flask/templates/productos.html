@@ -9,9 +9,9 @@
                     <input type="text" name="nombre" placeholder="Nombre">
                     <select name="tipo" id="tipo">
                         <option value="">--seleccionar una opcion--</option>
-                        <option value="pintura">Pintura</option>
-                        <option value="ferreteria">Ferreteria</option>
-                        <option value="otros">Otros</option>
+                        <option value="Pintura">Pintura</option>
+                        <option value="Ferreteria">Ferreteria</option>
+                        <option value="Otros">Otros</option>
                     </select>
                     <input type="number" name="cantidad" placeholder="Cantidad">
                     <input type="number" name="precio" placeholder="$0.00">
@@ -68,10 +68,10 @@
                             <!-- Agrega campos del formulario para editar el producto aquí -->
                             <input type="text" name="nombre" placeholder="Nombre" value="{{ editDB.1 }}">
                             <select name="tipo" id="tipo">
-                                <option value="">{{ editDB.2 }}</option>
-                                <option value="pintura">Pintura</option>
-                                <option value="ferreteria">Ferreteria</option>
-                                <option value="otros">Otros</option>
+                                <option value="{{ editDB.2 }}">{{ editDB.2 }}</option>
+                                <option value="Pintura">Pintura</option>
+                                <option value="Ferreteria">Ferreteria</option>
+                                <option value="Otros">Otros</option>
                             </select>
                             <input type="number" name="cantidad" placeholder="Cantidad" value="{{ editDB.3 }}">
                             <input type="number" name="precio" placeholder="$0.00" value="{{ editDB.4 }}">
