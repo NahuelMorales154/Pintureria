@@ -7,15 +7,18 @@
 #                                para no estar reiniciando el servidor en cada cambio.
 #                                -> Esto siempre que este el if (__name__ == '__main__'): al final del codigo
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 
+#Conexion a la base de datos#
 app = Flask(__name__)                       #Para saber si esta siendo ejecutando desde un archivo principal o esta siendo importada.
 app.config['MYSQL_HOST'] = "localhost"          #Host
 app.config['MYSQL_USER'] = "root"               #Usuario de phpmyadmin
 app.config['MYSQL_PASSWORD'] = ""               #Contraseña de phpmyadmin
 app.config['MYSQL_DB'] = "pintureria_pehuajo"   #Base de datos (No tabla)
 mysql = MySQL(app)
+#Llave#
+app.secret_key = "mysecretkey"
 
 #Rutas#
 @app.route("/")                             #Decorador, ruta principal.
@@ -36,7 +39,10 @@ def Empresa():
 
 @app.route("/productos")
 def Productos():
-    return render_template("productos.html")
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM productos')
+    datos = cur.fetchall()
+    return render_template("productos.html", datosDB = datos)
 
 @app.route("/clientes")
 def Clientes():
@@ -50,7 +56,7 @@ def Proveedores():
 def Reportes():
     return render_template("reportes.html")
 
-#-------------------- ABM --------------------#
+#-------------------- ABM Productos--------------------#
 @app.route("/add_product", methods=['POST'])
 def add_product():
     if request.method == 'POST':
@@ -62,17 +68,48 @@ def add_product():
         cur = mysql.connection.cursor()
         cur.execute('INSERT INTO productos (nombre, tipo, cantidad, precio) VALUES (%s, %s ,%s ,%s)', (nombre, tipo, cantidad, precio))
         mysql.connection.commit()
-        
-        print(f"nombre: {nombre}\nTipo: {tipo}\nCantidad: {cantidad},\nPrecio: ${precio}")
+        #mensaje
+        flash('Producto agregado satisfactoriamente')
     return redirect(url_for('Productos'))
 
-@app.route("/edit_product")
-def edit_product():
-    return "edit product"
+@app.route("/edit_product/<string:id>")
+def edit_product(id):
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM productos WHERE id = %s', (id))
+    datos = cur.fetchall()
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM productos')
+    datos2 = cur.fetchall()
+    return render_template('Productos.html', editDB = datos[0], datosDB = datos2)
 
-@app.route("/delete_product")
-def delete_product():
-    return "delete_product"
+@app.route("/update_product/<string:id>", methods=['POST'])
+def update_product(id):
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        tipo = request.form['tipo']
+        cantidad = request.form['cantidad']
+        precio = request.form['precio']
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            UPDATE productos 
+            SET nombre = %s,
+                tipo = %s,
+                cantidad = %s,
+                precio = %s
+            Where id = %s """, (nombre, tipo, cantidad, precio, id))
+        mysql.connection.commit()
+        flash('Producto actualizado satisfactoriamente')
+    return redirect(url_for('Productos'))
+
+@app.route("/delete_product/<string:id>")
+def delete_product(id):
+    #consulta delete_product
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM productos WHERE id = {0}'.format(id))
+    mysql.connection.commit()
+    #mensaje
+    flash('Producto eliminado satisfactoriamente')
+    return redirect(url_for('Productos'))
 
 #Modo desarrollo. (Usar solo en desarrollo, desabilitar en produccion)
 if (__name__ == "__main__"):

@@ -1,23 +1,95 @@
 {% extends "layout.html" %}
 
     {% block body %}
-    <h1>Productos</h1>
-    <h2>Carga de producto</h2>
-    <hr>
-    <a href="{{ url_for('Index') }}">Volver</a>
+    <div class="container">
+        <div class="navBar">
+            <div class="col1" style="margin-top: 10px;">
+                <form action="/add_product" method="POST">
 
-    <form action="/add_product" method="POST">
+                    <input type="text" name="nombre" placeholder="Nombre">
+                    <select name="tipo" id="tipo">
+                        <option value="">--seleccionar una opcion--</option>
+                        <option value="pintura">Pintura</option>
+                        <option value="ferreteria">Ferreteria</option>
+                        <option value="otros">Otros</option>
+                    </select>
+                    <input type="number" name="cantidad" placeholder="Cantidad">
+                    <input type="number" name="precio" placeholder="$0.00">
+                    <button type="submit">Guardar</button>
+                
+                </form>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+            <div class="col2" style="margin-bottom: 10px;">
+                <h2> </h2>
+                <a href="{{ url_for('Index') }}">Volver</a>
+            </div>
+        </div>
+        <div class="containerTable">
+            <h1>Productos</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Nombre</td>
+                        <td>Tipo</td>
+                        <td>Cantidad</td>
+                        <td>Precio</td>
+                        <td>Operaciones</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dato in datosDB %}
+                    <tr>
+                        <td> {{ dato.1 }} </td>
+                        <td> {{ dato.2 }} </td>
+                        <td> {{ dato.3 }} </td>
+                        <td> $ {{ dato.4 }} </td>
+                        <td>
+                            <a href="/edit_product/{{dato.0}}" class="btnEditar">Editar</a>
+                            <a href="/delete_product/{{dato.0}}" class="btnBorrar">Borrar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if editDB is defined %}
+                <!-- Popup para editar -->
+                <div id="popup" class="popup">
+                    <div class="popup-content">
+                        <span class="close" id="closePopup">&times;</span>
+                        <h2>Editar Producto</h2>
+                        <form action="/update_product/{{ editDB.0 }}" method="POST">
+                            <!-- Agrega campos del formulario para editar el producto aquí -->
+                            <input type="text" name="nombre" placeholder="Nombre" value="{{ editDB.1 }}">
+                            <select name="tipo" id="tipo">
+                                <option value="">{{ editDB.2 }}</option>
+                                <option value="pintura">Pintura</option>
+                                <option value="ferreteria">Ferreteria</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                            <input type="number" name="cantidad" placeholder="Cantidad" value="{{ editDB.3 }}">
+                            <input type="number" name="precio" placeholder="$0.00" value="{{ editDB.4 }}">
+                            <input type="submit" value="Guardar Cambios">
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+            {% endif %}
+            <script>
+                // JavaScript para mostrar y ocultar el popup
+                var popup = document.getElementById("popup");
+                var closePopupBtn = document.getElementById("closePopup");
 
-        <input type="text" name="nombre" placeholder="Nombre">
-        <select name="tipo" id="tipo">
-            <option value="">--seleccionar una opcion--</option>
-            <option value="pintura">Pintura</option>
-            <option value="ferreteria">Ferreteria</option>
-            <option value="otros">Otros</option>
-        </select>
-        <input type="number" name="cantidad" placeholder="Cantidad">
-        <input type="number" name="precio" placeholder="$0.00">
-        <button type="submit">Guardar</button>
-    
-    </form>
+                closePopupBtn.addEventListener("click", function() {
+                    popup.style.display = "none";
+                });
+            </script>
+        </div>
+    </div>
     {% endblock %}
