@@ -40,7 +40,7 @@ def Empresa():
 @app.route("/productos")
 def Productos():
     cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM productos')
+    cur.execute('SELECT * FROM productos ORDER BY cantidad ASC')
     datos = cur.fetchall()
     return render_template("productos.html", datosDB = datos)
 
@@ -117,15 +117,14 @@ def filter():
     if request.method == 'POST':
         nombre = request.form['nombre']
         tipo = request.form['tipo']
-        cantidad = request.form['cantidad']
-        precio = request.form['precio']
+        tipo_orden = request.form['tipo_orden']
+        orden = request.form['orden']
         #consulta filter
         cur = mysql.connection.cursor()
-        cur.execute('INSERT INTO productos (nombre, tipo, cantidad, precio) VALUES (%s, %s ,%s ,%s)', (nombre, tipo, cantidad, precio))
+        cur.execute(" SELECT * FROM productos WHERE nombre LIKE '%{0}%' AND tipo LIKE '%{1}%' ORDER BY {2} {3}".format(nombre, tipo, tipo_orden, orden))
         mysql.connection.commit()
-        #mensaje
-        flash('Producto agregado satisfactoriamente')
-    return redirect(url_for('Productos'))
+        datos = cur.fetchall()
+    return render_template("productos.html", datosDB = datos, filterDB = (nombre, tipo, tipo_orden, orden))
 
 #Modo desarrollo. (Usar solo en desarrollo, desabilitar en produccion)
 if (__name__ == "__main__"):
