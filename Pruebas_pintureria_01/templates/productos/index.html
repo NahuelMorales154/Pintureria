@@ -1,0 +1,117 @@
+{% include 'header.html' %}
+
+
+<!--Css-->
+<style>
+    /* Estilo para eliminar el borde en los botones cuando están seleccionados */
+    .btn:focus {
+        outline: none;
+        box-shadow: none;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <!-- Barra superior con filtros y botones -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Formulario para búsqueda por nombre -->
+        <form class="form-inline">
+            <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre" aria-label="Buscar" name="search">
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
+        </form>
+
+        <!-- Formulario para filtrar por tipo -->
+        <form class="form-inline">
+            <!-- Opciones de tipo cargadas desde la base de datos -->
+            <select class="form-control mr-sm-2" name="filterTipo">
+                <option value="">Todos los tipos</option>
+                {% for tipo in tipos %}
+                    <option value="{{ tipo }}">{{ tipo }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Filtrar</button>
+        </form>
+
+        <!-- Formulario para aplicar descuento de precios -->
+        <form class="form-inline" action="{{ url_for('apply_discount') }}" method="post">
+            <div class="form-group">
+                <label for="discountPercentage">Cambio de precios:</label>
+                <div class="input-group">
+                    <!-- Entrada de porcentaje de descuento -->
+                    <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="-100" max="100" step="0.01" required>
+                    <div class="input-group-append">
+                        <!-- Botón para aplicar el descuento -->
+                        <button type="submit" class="btn btn-warning">Aplicar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Botón para ingresar un nuevo producto -->
+        <a class="btn btn-success" href="{{ url_for('create')}}">Ingresar nuevo producto</a>
+    </div>
+
+    <!-- Tabla de productos -->
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Tipo</th>
+                    <th>Descripcion</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                {% if (search is none or search.lower() in producto[1].lower()) and (filterTipo is none or filterTipo == "" or filterTipo == producto[2]) %}
+                <tr>
+                    <td>{{ producto[1] }}</td>
+                    <td>{{ producto[6] }}</td>
+                    <td>{{ producto[2] }}</td>
+                    <td>{{ producto[3] }}</td>
+                    <td>{{ producto[4] }}</td>
+                    <td>${{ producto[5] }}</td>
+                    <td>
+                        <!-- Botón para editar -->
+                        <a class="btn btn-primary btn-sm" href="/edit/{{ producto[0] }}">Editar</a>
+                        <!-- Botón para eliminar con confirmación -->
+                        <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ producto[0] }}')">Eliminar</a>
+                        <!-- Botón para agregar al carrito -->
+                        <a class="btn btn-success btn-sm" href="/add_to_cart/{{ producto[0] }}">+</a>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+
+<!-- Script de SweetAlert2 para confirmar eliminación -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmDelete(productID) {
+    // Mostrar un cuadro de diálogo de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción no se puede deshacer',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirigir a la página de eliminación con el ID del producto
+            window.location.href = "/destroy/" + productID;
+        }
+    });
+}
+</script>

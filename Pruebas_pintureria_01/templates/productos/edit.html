@@ -1,0 +1,68 @@
+{% include 'header.html' %}
+
+<div class="container mt-4">
+    <!-- Título del formulario de edición -->
+    <h2 class="mb-3">Formulario de edición</h2>
+
+    <!-- Bucle para recorrer los productos y mostrar un formulario de edición para cada uno -->
+    {% for producto in productos %}
+    <form method="post" action="/update" enctype="multipart/form-data" class="card">
+        <!-- Encabezado del formulario de edición -->
+        <div class="card-header">
+            Editar producto
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Datos del producto</h5>
+            
+            <!-- Campo para editar el nombre del producto -->
+            <div class="form-group">
+                <label for="txtNombre">Nombre</label>
+                <input id="txtNombre" value="{{ producto[1] }}" class="form-control" type="text" name="txtNombre">
+            </div>
+
+            <!-- Campo para editar la marca del producto -->
+            <div class="form-group">
+                <label for="txtMarca">Marca</label>
+                <input id="txtMarca" value="{{ producto[6] }}" class="form-control" type="text" name="txtMarca">
+            </div>
+
+            <!-- Campo para editar el tipo del producto -->
+            <div class="form-group">
+                <label for="txtTipo">Tipo</label>
+                <input id="txtTipo" value="{{ producto[2] }}" class="form-control" type="text" name="txtTipo">
+            </div>
+
+            <!-- Campo para editar la descripción del producto -->
+            <div class="form-group">
+                <label for="txtDescripcion">Descripcion</label>
+                <input id="txtDescripcion" value="{{ producto[3] }}" class="form-control" type="text" name="txtDescripcion">
+            </div>
+
+            <!-- Campo para editar el precio del producto -->
+            <div class="form-group">
+                <label for="txtPrecio">Precio</label>
+                <input id="txtPrecio" value="{{ producto[5] }}" class="form-control" type="number" name="txtPrecio">
+            </div>
+
+            <!-- Campo para editar la cantidad del producto -->
+            <div class="form-group">
+                <label for="txtCantidad">Cantidad</label>
+                <input id="txtCantidad" value="{{ producto[4] }}" class="form-control" type="number" name="txtCantidad">
+            </div>
+
+            <!-- Campo oculto para almacenar el ID del producto -->
+            <input type="hidden" value="{{ producto[0] }}" name="txtID" id="txtID" >
+            
+            <!-- Botones para actualizar o regresar -->
+            <div class="form-group">
+                <!-- Botón para actualizar los datos del producto -->
+                <input class="btn btn-success" type="submit" value="Actualizar">
+                <!-- Botón para regresar a la página principal -->
+                <a href="{{url_for('index')}}" class="btn btn-primary">Regresar</a>
+            </div>
+        </div>
+    </form>
+    {% endfor %}
+</div>
+
+{% include 'footer.html' %}

@@ -1,0 +1,73 @@
+{% include 'header.html' %}
+
+<div class="container mt-4">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <!-- Si hay mensajes flash, mostrar una alerta de peligro -->
+    <div class="alert alert-danger" role="alert">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Título del formulario -->
+    <h2 class="mb-3">Ingresar producto</h2>
+
+    <!-- Formulario para ingresar datos del producto -->
+    <form method="post" action="/store" enctype="multipart/form-data" class="card">
+        <!-- Encabezado del formulario -->
+        <div class="card-header">
+            Ingresar producto
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Datos del producto</h5>
+            <!-- Campo para ingresar el nombre del producto -->
+            <div class="form-group">
+                <label for="txtNombre">Nombre</label>
+                <input id="txtNombre" class="form-control" type="text" name="txtNombre">
+            </div>
+
+            <!-- Campo para ingresar la marca del producto -->
+            <div class="form-group">
+                <label for="txtMarca">Marca</label>
+                <input id="txtMarca" class="form-control" type="text" name="txtMarca">
+            </div>
+
+            <!-- Campo para ingresar el tipo del producto -->
+            <div class="form-group">
+                <label for="txtTipo">Tipo</label>
+                <input id="txtTipo" class="form-control" type="text" name="txtTipo">
+            </div>
+
+            <!-- Campo para ingresar la descripción del producto -->
+            <div class="form-group">
+                <label for="txtDescripcion">Descripcion</label>
+                <input id="txtDescripcion" class="form-control" type="text" name="txtDescripcion">
+            </div>
+
+            <!-- Campo para ingresar la cantidad del producto -->
+            <div class="form-group">
+                <label for="txtCantidad">Cantidad</label>
+                <input id="txtCantidad" class="form-control" type="number" name="txtCantidad">
+            </div>
+
+            <!-- Campo para ingresar el precio del producto -->
+            <div class="form-group">
+                <label for="txtPrecio">Precio</label>
+                <input id="txtPrecio" class="form-control" type="number" name="txtPrecio">
+            </div>
+
+            <!-- Botones para agregar o regresar -->
+            <div class="form-group">
+                <!-- Botón para agregar el producto -->
+                <input type="submit" class="btn btn-success" value="Agregar">
+                <!-- Botón para regresar a la página principal -->
+                <a href="{{url_for('index')}}" class="btn btn-primary">Regresar</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% include 'footer.html' %}
