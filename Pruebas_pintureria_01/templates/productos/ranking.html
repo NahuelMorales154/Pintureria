@@ -1,0 +1,48 @@
+{% include 'header.html' %}
+
+<div class="container mt-4">
+    <h2 class="mb-3">Ranking</h2>
+
+    <!-- Formulario de filtro por tipo -->
+    <form class="form-inline mb-3">
+        <label for="tipoFiltro" class="mr-2">Filtrar por Tipo:</label>
+        <select id="tipoFiltro" class="form-control mr-2" name="tipo">
+            <option value="">Todos los tipos</option>
+            {% for tipo in tipos %}
+            <option value="{{ tipo }}" {% if tipo_filtro == tipo %}selected{% endif %}>{{ tipo }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Salida</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos_ranking %}
+                <tr>
+                    <td>{{ producto[1] }}</td>
+                    <td>{{ producto[6] }}</td>
+                    <td>{{ producto[2] }}</td>
+                    <td>{{ producto[3] }}</td>
+                    <td>{{ producto[4] }}</td>
+                    <td>${{ producto[5] }}</td>
+                    <td>{{ producto[8] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% include 'footer.html' %}

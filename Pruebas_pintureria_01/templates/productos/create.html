@@ -12,7 +12,7 @@
     {% endif %}
     {% endwith %}
 
-    <!-- Título del formulario -->
+    <!-- Titulo del formulario -->
     <h2 class="mb-3">Ingresar producto</h2>
 
     <!-- Formulario para ingresar datos del producto -->
@@ -43,7 +43,7 @@
 
             <!-- Campo para ingresar la descripción del producto -->
             <div class="form-group">
-                <label for="txtDescripcion">Descripcion</label>
+                <label for="txtDescripcion">Descripción</label>
                 <input id="txtDescripcion" class="form-control" type="text" name="txtDescripcion">
             </div>
 
@@ -59,11 +59,17 @@
                 <input id="txtPrecio" class="form-control" type="number" name="txtPrecio">
             </div>
 
+            <!-- Campo para ingresar el minimo del producto -->
+            <div class="form-group">
+                <label for="txtMinimo">Mínimo</label>
+                <input id="txtMinimo" class="form-control" type="number" name="txtMinimo">
+            </div>
+
             <!-- Botones para agregar o regresar -->
             <div class="form-group">
-                <!-- Botón para agregar el producto -->
+                <!-- Boton para agregar el producto -->
                 <input type="submit" class="btn btn-success" value="Agregar">
-                <!-- Botón para regresar a la página principal -->
+                <!-- Boton para regresar a la pagina principal -->
                 <a href="{{url_for('index')}}" class="btn btn-primary">Regresar</a>
             </div>
         </div>

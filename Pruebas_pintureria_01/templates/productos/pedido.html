@@ -1,0 +1,49 @@
+{% include 'header.html' %}
+
+<div class="container mt-4">
+    <!-- Titulo de la pagina -->
+    <h2>Pedido</h2>
+
+    <!-- Lista de productos en el pedido -->
+    <ul>
+        {% for item in pedido %}
+            <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
+            <li>{{ item['nombre'] }} (x{{ item['cantidad'] }}) - Precio: ${{ item['precio'] }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Formulario para procesar la compra -->
+    <form method="post" action="/procesar_compra">
+        <!-- Campo para seleccionar el cliente -->
+        <div class="form-group">
+            <label for="nombre_cliente">Selecciona un cliente:</label>
+            <select class="form-control" id="nombre_cliente" name="nombre_cliente">
+                {% for cliente in clientes_data %}
+                    <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Campos ocultos para cada producto en el pedido -->
+        {% for item in pedido %}
+            <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+            <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
+            <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
+        {% endfor %}
+
+        <!-- Campo para ingresar el pago del cliente -->
+        <div class="form-group">
+            <label for="pago_cliente">Pago del cliente:</label>
+            <input type="number" class="form-control" id="pago_cliente" name="pago_cliente" required>
+        </div>
+
+        <!-- Boton para procesar la compra -->
+        <button type="submit" class="btn btn-success">Procesar Compra</button>
+    </form>
+
+    <!-- Mostrar el total de la compra -->
+    <p>Total de la compra: ${{ total }}</p>
+
+</div>
+
+{% include 'footer.html' %}

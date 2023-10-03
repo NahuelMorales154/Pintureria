@@ -1,0 +1,36 @@
+{% include 'header.html' %}
+
+<div class="container">
+    <h2>Editar Cliente</h2>
+    <form method="POST" action="/actualizar_cliente/{{ cliente[0] }}">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ cliente[1] }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="dni" class="form-label">DNI</label>
+            <input type="text" class="form-control" id="dni" name="dni" value="{{ cliente[2] }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="numero" class="form-label">Número</label>
+            <input type="text" class="form-control" id="numero" name="numero" value="{{ cliente[3] }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="direccion" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="direccion" name="direccion" value="{{ cliente[4] }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="cuit" class="form-label">CUIT</label>
+            <input type="text" class="form-control" id="cuit" name="cuit" value="{{ cliente[5] }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="saldo" class="form-label">Saldo</label>
+            <input type="text" class="form-control" id="saldo" name="saldo" value="{{ cliente[6] }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+         <!-- Botón "Regresar" para volver a la página anterior -->
+        <a href="/clientes" class="btn btn-secondary">Regresar</a>
+    </form>
+</div>
+
+{% include 'footer.html' %}
