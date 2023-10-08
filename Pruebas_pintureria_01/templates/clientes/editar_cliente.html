@@ -1,4 +1,5 @@
-{% include 'header.html' %}
+{% extends "layout.html" %}
+{% block body %}
 
 <div class="container">
     <h2>Editar Cliente</h2>
@@ -11,21 +12,25 @@
             <label for="dni" class="form-label">DNI</label>
             <input type="text" class="form-control" id="dni" name="dni" value="{{ cliente[2] }}" required>
         </div>
+        <div class="mb-3" style="display: none;">
+            <label for="cuit" class="form-label">CUIT</label>
+            <input type="text" class="form-control" id="cuit" name="cuit" value="{{ cliente[3] }}">
+        </div>
         <div class="mb-3">
             <label for="numero" class="form-label">Número</label>
-            <input type="text" class="form-control" id="numero" name="numero" value="{{ cliente[3] }}" required>
+            <input type="text" class="form-control" id="numero" name="numero" value="{{ cliente[4] }}" required>
         </div>
         <div class="mb-3">
             <label for="direccion" class="form-label">Dirección</label>
-            <input type="text" class="form-control" id="direccion" name="direccion" value="{{ cliente[4] }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="cuit" class="form-label">CUIT</label>
-            <input type="text" class="form-control" id="cuit" name="cuit" value="{{ cliente[5] }}" required>
+            <input type="text" class="form-control" id="direccion" name="direccion" value="{{ cliente[5] }}" required>
         </div>
         <div class="mb-3">
             <label for="saldo" class="form-label">Saldo</label>
             <input type="text" class="form-control" id="saldo" name="saldo" value="{{ cliente[6] }}" required>
+        </div>
+        <div class="mb-3" style="display: none;">
+            <label for="tipo" class="form-label">Tipo</label>
+            <input type="text" class="form-control" id="tipo" name="tipo" value="{{ cliente[7] }}" required>
         </div>
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
          <!-- Botón "Regresar" para volver a la página anterior -->
@@ -33,4 +38,4 @@
     </form>
 </div>
 
-{% include 'footer.html' %}
+{% endblock %}

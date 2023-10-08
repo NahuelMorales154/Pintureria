@@ -1,5 +1,5 @@
-{% include 'header.html' %}
-
+{% extends "layout.html" %}
+{% block body %}
 
 <!--Css-->
 <style>
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Tabla de productos -->
-    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+    <div class="table-responsive contenedor_interno">
         <table class="table table-bordered table-hover">
             <thead class="thead-light">
                 <tr>
@@ -97,7 +97,7 @@
     </div>
 </div>
 
-{% include 'footer.html' %}
+{% endblock %}
 
 <!-- Script de SweetAlert2 para confirmar eliminación -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

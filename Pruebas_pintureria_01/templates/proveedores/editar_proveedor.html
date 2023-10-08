@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="container">
+    <h2>Editar Proveedor</h2>
+    <form method="POST" action="/actualizar_proveedor/{{ proveedor[0] }}">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ proveedor[1] }}" required>
+        </div>
+        <div class="mb-3" style="display: none;">
+            <label for="dni" class="form-label">DNI</label>
+            <input type="text" class="form-control" id="dni" name="dni" value="{{ proveedor[2] }}">
+        </div>
+        <div class="mb-3">
+            <label for="cuit" class="form-label">CUIT</label>
+            <input type="text" class="form-control" id="cuit" name="cuit" value="{{ proveedor[3] }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="numero" class="form-label">Número</label>
+            <input type="text" class="form-control" id="numero" name="numero" value="{{ proveedor[4] }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="direccion" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="direccion" name="direccion" value="{{ proveedor[5] }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="saldo" class="form-label">Saldo</label>
+            <input type="text" class="form-control" id="saldo" name="saldo" value="{{ proveedor[6] }}" required>
+        </div>
+        <div class="mb-3" style="display: none;">
+            <label for="tipo" class="form-label">Tipo</label>
+            <input type="text" class="form-control" id="tipo" name="tipo" value="{{ proveedor[7] }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+         <!-- Botón "Regresar" para volver a la página anterior -->
+        <a href="/proveedores" class="btn btn-secondary">Regresar</a>
+    </form>
+</div>
+
+{% endblock %}

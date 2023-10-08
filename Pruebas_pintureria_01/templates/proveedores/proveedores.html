@@ -2,19 +2,19 @@
 {% block body %}
 
 <div class="container">
-    <h2>Clientes</h2>
-    <form class="mb-3" action="/clientes" method="GET">
+    <h2>Proveedores</h2>
+    <form class="mb-3" action="/proveedores" method="GET">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Buscar por nombre o DNI" name="search">
             <button class="btn btn-outline-secondary" type="submit">Buscar</button>
         </div>
     </form>
-    <a href="/nuevo_cliente" class="btn btn-success mb-3">Agregar Cliente Nuevo</a>
+    <a href="/nuevo_proveedor" class="btn btn-success mb-3">Agregar Proveedor Nuevo</a>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>DNI</th>
+                <th>Cuit</th>
                 <th>Número</th>
                 <th>Dirección</th>
                 <th>Saldo</th>
@@ -22,19 +22,19 @@
             </tr>
         </thead>
         <tbody>
-            {% for cliente in clientes_data %}
-            {% if cliente[7] == 1 %}
+            {% for proveedor in proveedores_data %}
+            {% if proveedor[7] == 2 %}
             <tr>
-                <td>{{ cliente[1] }}</td>
-                <td>{{ cliente[2] }}</td>
-                <td>{{ cliente[4] }}</td>
-                <td>{{ cliente[5] }}</td>
-                <td style="color: {% if cliente[6] > 0 %}green{% elif cliente[6] < 0 %}red{% endif %}">${{ cliente[6] }}</td>
+                <td>{{ proveedor[1] }}</td>
+                <td>{{ proveedor[3] }}</td>
+                <td>{{ proveedor[4] }}</td>
+                <td>{{ proveedor[5] }}</td>
+                <td style="color: {% if proveedor[6] > 0 %}green{% elif proveedor[6] < 0 %}red{% endif %}">${{ proveedor[6] }}</td>
                 <td>
                     <!-- Botón para editar -->
-                    <a class="btn btn-primary btn-sm" href="/editar_cliente/{{ cliente[0] }}">Editar</a>
+                    <a class="btn btn-primary btn-sm" href="/editar_proveedor/{{ proveedor[0] }}">Editar</a>
                     <!-- Botón para eliminar con confirmación -->
-                    <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ cliente[0] }}')">Eliminar</a>
+                    <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ proveedor[0] }}')">Eliminar</a>
                 </td>
             </tr>
             {% endif %}
@@ -48,7 +48,7 @@
 <!-- Script de SweetAlert2 para confirmar eliminación -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function confirmDelete(clienteID) {
+function confirmDelete(proveedorID) {
     // Mostrar un cuadro de diálogo de confirmación
     Swal.fire({
         title: '¿Estás seguro?',
@@ -61,8 +61,8 @@ function confirmDelete(clienteID) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Redirigir a la página de eliminación de cliente con el ID del cliente
-            window.location.href = "/eliminar_cliente/" + clienteID;
+            // Redirigir a la página de eliminación de proveedor con el ID del proveedor
+            window.location.href = "/eliminar_proveedor/" + proveedorID;
         }
     });
 }

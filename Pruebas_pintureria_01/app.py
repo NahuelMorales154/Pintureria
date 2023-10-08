@@ -16,9 +16,32 @@ mysql.init_app(app)
 # Inicio del pedido
 pedido = []
 
-# Ruta principal - Mostrar lista de productos con opciones de busqueda y filtrado
+# Ruta principal
 @app.route("/")
 def index():
+    return render_template("index.html")
+contrasena_correcta = "asd123"
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        contrasena_ingresada = request.form.get("contrasena")
+        if contrasena_ingresada == contrasena_correcta:
+            # Contraseña correcta, redirige al usuario al índice
+            return render_template("home.html")
+        else:
+            # Contraseña incorrecta, muestra un mensaje de error
+            mensaje_error = "Contraseña incorrecta. Inténtalo de nuevo."
+            return render_template("index.html", mensaje_error=mensaje_error)
+    return render_template("index.html", mensaje_error=None)
+
+@app.route("/home")
+def home():
+    current_page = 'home'
+    return render_template("home.html", current_page=current_page)
+# Ruta - Mostrar lista de productos con opciones de busqueda y filtrado
+@app.route("/productos")
+def products():
+    current_page = 'productos'
     search = request.args.get("search")
     filterTipo = request.args.get("filterTipo")
 
@@ -32,7 +55,7 @@ def index():
     productos = cursor.fetchall()
 
     conn.commit()
-    return render_template("productos/index.html", productos=productos, search=search, filterTipo=filterTipo, tipos=tipos)
+    return render_template("productos/productos.html", current_page=current_page, productos=productos, search=search, filterTipo=filterTipo, tipos=tipos)
 
 @app.route("/destroy/<int:id>")
 def destroy(id):
@@ -40,7 +63,7 @@ def destroy(id):
     cursor = conn.cursor()
     cursor.execute("DELETE FROM productos WHERE id=%s", (id,))
     conn.commit()
-    return redirect("/")
+    return redirect("/productos")
 
 @app.route("/edit/<int:id>")
 def edit(id):
@@ -70,7 +93,7 @@ def update():
     cursor.execute(sql, datos)
     conn.commit()
 
-    return redirect("/")
+    return redirect("/productos")
 
 @app.route('/create')
 def create():
@@ -98,7 +121,7 @@ def storage():
     cursor = conn.cursor()
     cursor.execute(sql, datos)
     conn.commit()
-    return redirect("/")
+    return redirect("/productos")
 
 # Ruta para aplicar descuento a los productos
 @app.route('/apply_discount', methods=['POST'])
@@ -118,7 +141,7 @@ def apply_discount():
         cursor.execute("UPDATE productos SET precio=%s WHERE id=%s;", (new_price, producto[0]))
 
     conn.commit()
-    return redirect("/")
+    return redirect("/productos")
 
 # Ruta para agregar un producto al pedido
 @app.route('/add_to_cart/<int:id>')
@@ -145,7 +168,7 @@ def add_to_cart(id):
         })
 
     conn.commit()
-    return redirect("/")
+    return redirect("/productos")
 
 # Ruta para mostrar la pagina del pedido
 @app.route("/pedido")
@@ -166,6 +189,7 @@ def mostrar_pedido():
 # Ruta para mostrar la lista de clientes
 @app.route('/clientes')
 def clientes():
+    current_page = 'clientes'
     search = request.args.get("search")
 
     conn = mysql.connect()
@@ -173,15 +197,15 @@ def clientes():
 
     # SQL para filtrada clientes por nombre o DNI
     if search:
-        cursor.execute("SELECT * FROM clientes WHERE nombre LIKE %s OR dni LIKE %s;", (f"%{search}%", f"%{search}%"))
+        cursor.execute("SELECT * FROM clientes_proveedores WHERE nombre LIKE %s OR dni LIKE %s;", (f"%{search}%", f"%{search}%"))
     else:
-        cursor.execute("SELECT * FROM clientes;")
+        cursor.execute("SELECT * FROM clientes_proveedores;")
 
     clientes_data = cursor.fetchall()
 
     conn.commit()
 
-    return render_template("clientes/clientes.html", clientes_data=clientes_data)
+    return render_template("clientes/clientes.html", current_page=current_page, clientes_data=clientes_data)
 
 # Ruta para mostrar el formulario de agregar nuevo cliente
 @app.route("/nuevo_cliente", methods=["GET"])
@@ -195,11 +219,11 @@ def agregar_cliente():
     _dni = request.form["dni"]
     _numero = request.form["numero"]
     _direccion = request.form["direccion"]
-    _cuit = request.form["cuit"]
+    _tipo = 1
 
     # Validacion de datos
 
-    if not _nombre or not _dni or not _numero or not _direccion or not _cuit:
+    if not _nombre or not _dni or not _numero or not _direccion:
         flash("Todos los campos son obligatorios. Por favor, completa todos los campos.")
         return redirect("/nuevo_cliente")
 
@@ -207,8 +231,8 @@ def agregar_cliente():
     cursor = conn.cursor()
 
     # Insertar el nuevo cliente en la base de datos
-    sql = "INSERT INTO `clientes` (`nombre`, `dni`, `numero`, `direccion`, `cuit`) VALUES (%s, %s, %s, %s, %s);"
-    datos = (_nombre, _dni, _numero, _direccion, _cuit)
+    sql = "INSERT INTO `clientes_proveedores` (`nombre`, `dni`, `numero`, `direccion`, `tipo`) VALUES (%s, %s, %s, %s, %s);"
+    datos = (_nombre, _dni, _numero, _direccion, _tipo)
 
     cursor.execute(sql, datos)
     conn.commit()
@@ -223,7 +247,7 @@ def eliminar_cliente(id):
     cursor = conn.cursor()
 
     # Eliminar el cliente con el ID proporcionado
-    cursor.execute("DELETE FROM clientes WHERE id=%s", (id,))
+    cursor.execute("DELETE FROM clientes_proveedores WHERE id=%s", (id,))
     conn.commit()
     return redirect("/clientes") 
     
@@ -234,7 +258,7 @@ def editar_cliente(id):
     cursor = conn.cursor()
 
     # Obtener los datos del cliente con el ID proporcionado para editar
-    cursor.execute("SELECT * FROM clientes WHERE id=%s", (id,))
+    cursor.execute("SELECT * FROM clientes_proveedores WHERE id=%s", (id,))
     cliente = cursor.fetchone()
 
     conn.commit()
@@ -246,10 +270,11 @@ def editar_cliente(id):
 def actualizar_cliente(id):
     _nombre = request.form["nombre"]
     _dni = request.form["dni"]
+    _cuit = request.form["cuit"]
     _numero = request.form["numero"]
     _direccion = request.form["direccion"]
-    _cuit = request.form["cuit"]
     _saldo = request.form["saldo"]
+    _tipo = request.form["tipo"]
 
     # Validacion de datos
 
@@ -261,14 +286,125 @@ def actualizar_cliente(id):
     cursor = conn.cursor()
 
     # Actualizar los datos del cliente en la base de datos
-    sql = "UPDATE `clientes` SET `nombre`=%s, `dni`=%s, `numero`=%s, `direccion`=%s, `cuit`=%s, `saldo`=%s WHERE `id`=%s;"
-    datos = (_nombre, _dni, _numero, _direccion, _cuit, _saldo, id)
+    sql = "UPDATE `clientes_proveedores` SET `nombre`=%s, `dni`=%s, `numero`=%s, `direccion`=%s, `cuit`=%s, `saldo`=%s, `tipo`=%s WHERE `id`=%s;"
+    datos = (_nombre, _dni, _numero, _direccion, _cuit, _saldo, _tipo, id)
 
     cursor.execute(sql, datos)
     conn.commit()
 
     flash("Cliente actualizado exitosamente.")
     return redirect("/clientes")
+
+################################################################
+# Ruta para mostrar la lista de proveedores
+@app.route('/proveedores')
+def proveedores():
+    current_page = 'proveedores'
+    search = request.args.get("search")
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # SQL para filtrada proveedores por nombre o DNI
+    if search:
+        cursor.execute("SELECT * FROM clientes_proveedores WHERE nombre LIKE %s OR cuit LIKE %s;", (f"%{search}%", f"%{search}%"))
+    else:
+        cursor.execute("SELECT * FROM clientes_proveedores;")
+
+    proveedores_data = cursor.fetchall()
+
+    conn.commit()
+
+    return render_template("proveedores/proveedores.html", current_page=current_page, proveedores_data=proveedores_data)
+
+# Ruta para mostrar el formulario de agregar nuevo proveedor
+@app.route("/nuevo_proveedor", methods=["GET"])
+def nuevo_proveedor():
+    return render_template("proveedores/nuevo_proveedor.html")
+
+# Ruta para agregar un nuevo proveedor a la base de datos
+@app.route("/agregar_proveedor", methods=["POST"])
+def agregar_proveedor():
+    _nombre = request.form["nombre"]
+    _cuit = request.form["cuit"]
+    _numero = request.form["numero"]
+    _direccion = request.form["direccion"]
+    _tipo = 2
+
+    # Validacion de datos
+
+    if not _nombre or not _cuit or not _numero or not _direccion:
+        flash("Todos los campos son obligatorios. Por favor, completa todos los campos.")
+        return redirect("/nuevo_proveedor")
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Insertar el nuevo proveedor en la base de datos
+    sql = "INSERT INTO `clientes_proveedores` (`nombre`, `cuit`, `numero`, `direccion`, `tipo`) VALUES (%s, %s, %s, %s, %s);"
+    datos = (_nombre, _cuit, _numero, _direccion, _tipo)
+
+    cursor.execute(sql, datos)
+    conn.commit()
+
+    flash("Proveedor agregado exitosamente.")
+    return redirect("/proveedores")
+
+# Ruta para eliminar un proveedor
+@app.route("/eliminar_proveedor/<int:id>")
+def eliminar_proveedor(id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Eliminar el proveedor con el ID proporcionado
+    cursor.execute("DELETE FROM clientes_proveedores WHERE id=%s", (id,))
+    conn.commit()
+    return redirect("/proveedor") 
+    
+# Ruta para mostrar el formulario de edicion de proveedor
+@app.route("/editar_proveedor/<int:id>", methods=["GET"])
+def editar_proveedor(id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Obtener los datos del proveedor con el ID proporcionado para editar
+    cursor.execute("SELECT * FROM clientes_proveedores WHERE id=%s", (id,))
+    proveedor = cursor.fetchone()
+
+    conn.commit()
+
+    return render_template("proveedores/editar_proveedor.html", proveedor=proveedor)
+
+# Ruta para actualizar los datos del proveedor despues de editar
+@app.route('/actualizar_proveedor/<int:id>', methods=['POST'])
+def actualizar_proveedor(id):
+    _nombre = request.form["nombre"]
+    _dni = request.form["dni"]
+    _cuit = request.form["cuit"]
+    _numero = request.form["numero"]
+    _direccion = request.form["direccion"]
+    _saldo = request.form["saldo"]
+    _tipo = request.form["tipo"]
+
+    # Validacion de datos
+
+    if not _nombre or not _dni or not _numero or not _direccion or not _cuit or not _saldo:
+        flash("Todos los campos son obligatorios. Por favor, completa todos los campos.")
+        return redirect(f"/editar_proveedor/{id}")
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Actualizar los datos del proveedor en la base de datos
+    sql = "UPDATE `clientes_proveedores` SET `nombre`=%s, `dni`=%s, `numero`=%s, `direccion`=%s, `cuit`=%s, `saldo`=%s, `tipo`=%s WHERE `id`=%s;"
+    datos = (_nombre, _dni, _numero, _direccion, _cuit, _saldo, _tipo, id)
+
+    cursor.execute(sql, datos)
+    conn.commit()
+
+    flash("proveedor actualizado exitosamente.")
+    return redirect("/proveedores")
+################################################################
 
 
 # Función para restar el stock de un producto
@@ -312,6 +448,7 @@ def restar_stock(producto_id, cantidad_comprada):
 
 @app.route("/procesar_compra", methods=["POST"])
 def procesar_compra():
+    current_page = 'pedido'
     # Obtener la lista de productos y cantidades del pedido
     lista_productos = ", ".join([f"{item['nombre']} (x{item['cantidad']})" for item in pedido])
 
@@ -399,12 +536,13 @@ def procesar_compra():
     pedido.clear()
 
     flash("Compra procesada exitosamente.")
-    return redirect("/pedido")
+    return render_template("productos/pedido.html", current_page=current_page)
 
 
 # Ruta para mostrar el ranking de productos con filtro por tipo
 @app.route("/ranking")
 def ranking():
+    current_page = 'ranking'
     # Obtener el valor del filtro de tipo desde los parametros de la URL
     tipo_filtro = request.args.get("tipo")
 
@@ -426,7 +564,7 @@ def ranking():
     cursor.execute("SELECT DISTINCT tipo FROM productos;")
     tipos = [tipo[0] for tipo in cursor.fetchall()]
 
-    return render_template("productos/ranking.html", productos_ranking=productos_ranking, tipos=tipos, tipo_filtro=tipo_filtro)
+    return render_template("productos/ranking.html", current_page=current_page, productos_ranking=productos_ranking, tipos=tipos, tipo_filtro=tipo_filtro)
 
 # Iniciar la aplicacion Flask
 if __name__ == "__main__":

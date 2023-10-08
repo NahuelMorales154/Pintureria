@@ -1,6 +1,7 @@
-{% include 'header.html' %}
+{% extends "layout.html" %}
+{% block body %}
 
-<div class="container mt-4">
+<div class="container mt-4 contenedor_interno">
     <h2 class="mb-3">Formulario de edición</h2>
 
     <form method="post" action="/update" enctype="multipart/form-data" class="card">
@@ -54,10 +55,10 @@
 
             <div class="form-group">
                 <input class="btn btn-success" type="submit" value="Actualizar">
-                <a href="{{url_for('index')}}" class="btn btn-primary">Regresar</a>
+                <a href="{{url_for('products')}}" class="btn btn-primary">Regresar</a>
             </div>
         </div>
     </form>
 </div>
 
-{% include 'footer.html' %}
+{% endblock %}

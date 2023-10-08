@@ -1,4 +1,5 @@
-{% include 'header.html' %}
+{% extends "layout.html" %}
+{% block body %}
 
 <div class="container mt-4">
     {% with messages = get_flashed_messages() %}
@@ -12,68 +13,70 @@
     {% endif %}
     {% endwith %}
 
-    <!-- Titulo del formulario -->
-    <h2 class="mb-3">Ingresar producto</h2>
+    <div class="contenedor_interno">
+        <!-- Titulo del formulario -->
+        <h2 class="mb-3">Ingresar producto</h2>
 
-    <!-- Formulario para ingresar datos del producto -->
-    <form method="post" action="/store" enctype="multipart/form-data" class="card">
-        <!-- Encabezado del formulario -->
-        <div class="card-header">
-            Ingresar producto
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Datos del producto</h5>
-            <!-- Campo para ingresar el nombre del producto -->
-            <div class="form-group">
-                <label for="txtNombre">Nombre</label>
-                <input id="txtNombre" class="form-control" type="text" name="txtNombre">
+        <!-- Formulario para ingresar datos del producto -->
+        <form method="post" action="/store" enctype="multipart/form-data" class="card">
+            <!-- Encabezado del formulario -->
+            <div class="card-header">
+                Ingresar producto
             </div>
+            <div class="card-body">
+                <h5 class="card-title">Datos del producto</h5>
+                <!-- Campo para ingresar el nombre del producto -->
+                <div class="form-group">
+                    <label for="txtNombre">Nombre</label>
+                    <input id="txtNombre" class="form-control" type="text" name="txtNombre">
+                </div>
 
-            <!-- Campo para ingresar la marca del producto -->
-            <div class="form-group">
-                <label for="txtMarca">Marca</label>
-                <input id="txtMarca" class="form-control" type="text" name="txtMarca">
-            </div>
+                <!-- Campo para ingresar la marca del producto -->
+                <div class="form-group">
+                    <label for="txtMarca">Marca</label>
+                    <input id="txtMarca" class="form-control" type="text" name="txtMarca">
+                </div>
 
-            <!-- Campo para ingresar el tipo del producto -->
-            <div class="form-group">
-                <label for="txtTipo">Tipo</label>
-                <input id="txtTipo" class="form-control" type="text" name="txtTipo">
-            </div>
+                <!-- Campo para ingresar el tipo del producto -->
+                <div class="form-group">
+                    <label for="txtTipo">Tipo</label>
+                    <input id="txtTipo" class="form-control" type="text" name="txtTipo">
+                </div>
 
-            <!-- Campo para ingresar la descripción del producto -->
-            <div class="form-group">
-                <label for="txtDescripcion">Descripción</label>
-                <input id="txtDescripcion" class="form-control" type="text" name="txtDescripcion">
-            </div>
+                <!-- Campo para ingresar la descripción del producto -->
+                <div class="form-group">
+                    <label for="txtDescripcion">Descripción</label>
+                    <input id="txtDescripcion" class="form-control" type="text" name="txtDescripcion">
+                </div>
 
-            <!-- Campo para ingresar la cantidad del producto -->
-            <div class="form-group">
-                <label for="txtCantidad">Cantidad</label>
-                <input id="txtCantidad" class="form-control" type="number" name="txtCantidad">
-            </div>
+                <!-- Campo para ingresar la cantidad del producto -->
+                <div class="form-group">
+                    <label for="txtCantidad">Cantidad</label>
+                    <input id="txtCantidad" class="form-control" type="number" name="txtCantidad">
+                </div>
 
-            <!-- Campo para ingresar el precio del producto -->
-            <div class="form-group">
-                <label for="txtPrecio">Precio</label>
-                <input id="txtPrecio" class="form-control" type="number" name="txtPrecio">
-            </div>
+                <!-- Campo para ingresar el precio del producto -->
+                <div class="form-group">
+                    <label for="txtPrecio">Precio</label>
+                    <input id="txtPrecio" class="form-control" type="number" name="txtPrecio">
+                </div>
 
-            <!-- Campo para ingresar el minimo del producto -->
-            <div class="form-group">
-                <label for="txtMinimo">Mínimo</label>
-                <input id="txtMinimo" class="form-control" type="number" name="txtMinimo">
-            </div>
+                <!-- Campo para ingresar el minimo del producto -->
+                <div class="form-group">
+                    <label for="txtMinimo">Mínimo</label>
+                    <input id="txtMinimo" class="form-control" type="number" name="txtMinimo">
+                </div>
 
-            <!-- Botones para agregar o regresar -->
-            <div class="form-group">
-                <!-- Boton para agregar el producto -->
-                <input type="submit" class="btn btn-success" value="Agregar">
-                <!-- Boton para regresar a la pagina principal -->
-                <a href="{{url_for('index')}}" class="btn btn-primary">Regresar</a>
+                <!-- Botones para agregar o regresar -->
+                <div class="form-group">
+                    <!-- Boton para agregar el producto -->
+                    <input type="submit" class="btn btn-success" value="Agregar">
+                    <!-- Boton para regresar a la pagina principal -->
+                    <a href="{{url_for('products')}}" class="btn btn-primary">Regresar</a>
+                </div>
             </div>
-        </div>
+        </div> 
     </form>
 </div>
 
-{% include 'footer.html' %}
+{% endblock %}

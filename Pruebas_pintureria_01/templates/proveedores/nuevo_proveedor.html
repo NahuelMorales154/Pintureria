@@ -2,19 +2,19 @@
 {% block body %}
 
 <div class="container">
-    <h2>Agregar Nuevo Cliente</h2>
-    <form method="POST" action="/agregar_cliente">
+    <h2>Agregar Nuevo Proveedor</h2>
+    <form method="POST" action="/agregar_proveedores">
         <div class="form-group">
             <label for="nombre">Nombre:</label>
             <input type="text" class="form-control" id="nombre" name="nombre" required>
         </div>
-        <div class="form-group">
-            <label for="dni">DNI:</label>
-            <input type="text" class="form-control" id="dni" name="dni" pattern="[0-9]+" title="Ingresa solo números" required>
-        </div>
         <div class="form-group" style="display: none;">
+            <label for="dni">DNI:</label>
+            <input type="text" class="form-control" id="dni" name="dni" pattern="[0-9]+" title="Ingresa solo números">
+        </div>
+        <div class="form-group">
             <label for="cuit">CUIT:</label>
-            <input type="text" class="form-control" id="cuit" name="cuit" pattern="[0-9]+" title="Ingresa solo números">
+            <input type="text" class="form-control" id="cuit" name="cuit" pattern="[0-9]+" title="Ingresa solo números" required>
         </div>
         <div class="form-group">
             <label for="numero">Número:</label>
@@ -25,8 +25,8 @@
             <input type="text" class="form-control" id="direccion" name="direccion" required>
         </div>
 
-        <button type="submit" class="btn btn-primary">Agregar Cliente</button>
-        <a href="/clientes" class="btn btn-secondary">Regresar</a>
+        <button type="submit" class="btn btn-primary">Agregar Proveedor</button>
+        <a href="/proveedores" class="btn btn-secondary">Regresar</a>
     </form>
 </div>
 
