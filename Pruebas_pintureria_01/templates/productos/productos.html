@@ -11,44 +11,52 @@
 </style>
 
 <div class="container mt-4">
-
     <!-- Barra superior con filtros y botones -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <!-- Formulario para busqueda por nombre -->
-        <form class="form-inline">
-            <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre" aria-label="Buscar" name="search">
-            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
-        </form>
-
-        <!-- Formulario para filtrar por tipo -->
-        <form class="form-inline">
-            <!-- Opciones de tipo cargadas desde la base de datos -->
-            <select class="form-control mr-sm-2" name="filterTipo">
-                <option value="">Todos los tipos</option>
-                {% for tipo in tipos %}
-                    <option value="{{ tipo }}">{{ tipo }}</option>
-                {% endfor %}
-            </select>
-            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Filtrar</button>
-        </form>
-
-        <!-- Formulario para aplicar descuento de precios -->
-        <form class="form-inline" action="{{ url_for('apply_discount') }}" method="post">
-            <div class="form-group">
-                <label for="discountPercentage">Cambio de precios:</label>
-                <div class="input-group">
-                    <!-- Entrada de porcentaje de descuento -->
-                    <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="-100" max="100" step="0.01" required>
-                    <div class="input-group-append">
-                        <!-- Boton para aplicar descuento -->
-                        <button type="submit" class="btn btn-warning">Aplicar</button>
-                    </div>
-                </div>
+    <div>
+        <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+            <div>
+                <!-- Formulario para busqueda por nombre -->
+                <form class="form-inline">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre" aria-label="Buscar" name="search">
+                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
+                </form>            
             </div>
-        </form>
 
-        <!-- Boton para ingresar un nuevo producto -->
-        <a class="btn btn-success" href="{{ url_for('create')}}">Ingresar nuevo producto</a>
+            <div>
+                <!-- Formulario para filtrar por tipo -->
+                <form class="form-inline" style="justify-content: center;">
+                    <!-- Opciones de tipo cargadas desde la base de datos -->
+                    <select class="form-control mr-sm-2" name="filterTipo">
+                        <option value="">Todos los tipos</option>
+                        {% for tipo in tipos %}
+                            <option value="{{ tipo }}">{{ tipo }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Filtrar</button>
+                </form>            
+            </div>
+
+            <div>
+                <!-- Formulario para aplicar descuento de precios -->
+                <form class="form-inline" action="{{ url_for('apply_discount') }}" method="post" style="justify-content: center;">
+                    <div class="form-group">
+                        <label for="discountPercentage" style="margin-right: 0.5rem!important;">Cambio de precios:</label>
+                        <div class="input-group">
+                            <!-- Entrada de porcentaje de descuento -->
+                            <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="-100" max="100" step="0.01" required>
+                            <div class="input-group-append">
+                                <!-- Boton para aplicar descuento -->
+                                <button type="submit" class="btn btn-warning">Aplicar</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div style="grid-column: 1/-1; text-align: right;">
+                <!-- Boton para ingresar un nuevo producto -->
+                <a class="btn btn-success" href="{{ url_for('create')}}" style="margin: 16px 0;">Producto Nuevo</a>    
+            </div>            
+        </div>
     </div>
 
     <!-- Tabla de productos -->

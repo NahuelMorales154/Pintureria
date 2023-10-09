@@ -179,7 +179,7 @@ def mostrar_pedido():
     cursor = conn.cursor()
 
     # Obtener lista de clientes desde la base de datos
-    cursor.execute("SELECT id, nombre FROM clientes;")
+    cursor.execute("SELECT id, nombre FROM clientes_proveedores;")
     clientes_data = cursor.fetchall()
 
     conn.commit()
@@ -467,7 +467,7 @@ def procesar_compra():
     cursor = conn.cursor()
 
     # Obtener el nombre del cliente a partir de su ID
-    cursor.execute("SELECT nombre FROM clientes WHERE id=%s", (id_cliente,))
+    cursor.execute("SELECT nombre FROM clientes_proveedores WHERE id=%s", (id_cliente,))
     resultado_cliente = cursor.fetchone()
 
     # Verificar si result_cliente es None y manejarlo
@@ -496,14 +496,14 @@ def procesar_compra():
     diferencia = monto_pagado - total_compra
 
     # Obtener el saldo actual del cliente
-    cursor.execute("SELECT saldo FROM clientes WHERE id=%s", (id_cliente,))
+    cursor.execute("SELECT saldo FROM clientes_proveedores WHERE id=%s", (id_cliente,))
     saldo_actual = cursor.fetchone()[0]
 
     # Calcular el nuevo saldo sumando la diferencia
     nuevo_saldo = saldo_actual + diferencia
 
     # Actualizar el saldo del cliente en la base de datos
-    cursor.execute("UPDATE clientes SET saldo=%s WHERE id=%s", (nuevo_saldo, id_cliente))
+    cursor.execute("UPDATE clientes_proveedores SET saldo=%s WHERE id=%s", (nuevo_saldo, id_cliente))
     conn.commit()
 
     # Insertar los datos en la tabla "detalles_compra"

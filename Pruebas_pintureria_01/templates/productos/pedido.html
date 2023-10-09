@@ -4,47 +4,70 @@
 <div class="container mt-4">
     <!-- Titulo de la pagina -->
     <h2>Pedido</h2>
+    <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+        <div>
+            <!-- Formulario para procesar la compra -->
+            <form method="post" action="/procesar_compra">
+                <!-- Campo para seleccionar el cliente -->
+                <div class="form-group">
+                    <label for="nombre_cliente">Selecciona un cliente:</label>
+                    <select class="form-control" id="nombre_cliente" name="nombre_cliente">
+                        {% for cliente in clientes_data %}
+                            <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <!-- Lista de productos en el pedido -->
-    <ul>
-        {% for item in pedido %}
-            <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
-            <li>{{ item['nombre'] }} (x{{ item['cantidad'] }}) - Precio: ${{ item['precio'] }}</li>
-        {% endfor %}
-    </ul>
-
-    <!-- Formulario para procesar la compra -->
-    <form method="post" action="/procesar_compra">
-        <!-- Campo para seleccionar el cliente -->
-        <div class="form-group">
-            <label for="nombre_cliente">Selecciona un cliente:</label>
-            <select class="form-control" id="nombre_cliente" name="nombre_cliente">
-                {% for cliente in clientes_data %}
-                    <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
+                <!-- Campos ocultos para cada producto en el pedido -->
+                {% for item in pedido %}
+                    <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                    <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
+                    <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
                 {% endfor %}
-            </select>
+
+                <!-- Campo para ingresar el pago del cliente -->
+                <div class="form-group">
+                    <label for="pago_cliente">Pago del cliente:</label>
+                    <input type="number" class="form-control" id="pago_cliente" name="pago_cliente" required>
+                </div>
+
+                <!-- Mostrar el total de la compra -->
+                <p>Total de la compra: ${{ total }}</p>  
+
+                <!-- Boton para procesar la compra -->
+                <button type="submit" class="btn btn-success">Procesar Compra</button>
+            </form>
+
         </div>
-
-        <!-- Campos ocultos para cada producto en el pedido -->
-        {% for item in pedido %}
-            <input type="hidden" name="productos[]" value="{{ item['id'] }}">
-            <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
-            <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
-        {% endfor %}
-
-        <!-- Campo para ingresar el pago del cliente -->
-        <div class="form-group">
-            <label for="pago_cliente">Pago del cliente:</label>
-            <input type="number" class="form-control" id="pago_cliente" name="pago_cliente" required>
+        <div style="margin: 0 0 0 10%; max-height: 75vh; overflow-y: auto;">
+            <div style="padding: 3% 5%; background-color: beige;">
+                <!-- Lista de productos en el pedido -->
+                <ul>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div><h5>Productos:</h5></div>
+                        <div style="width: 25%;"><h5>Precio:</h5></div>
+                    </div>
+                    {% for item in pedido %}
+                        <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
+                        <div style="display: flex; justify-content: space-between;">
+                            <div>
+                                <h6>{{ item['nombre'] }} (x{{ item['cantidad'] }})</h6>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; width: 25%;">
+                                <div>
+                                    <h6>${{ item['precio'] }}</h6>
+                                </div>
+                                <div>
+                                    <h6>${{ item['precio'] * item['cantidad'] }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <li>{{ item['nombre'] }} (x{{ item['cantidad'] }}) - Precio: ${{ item['precio'] }}</li> -->
+                    {% endfor %}
+                </ul> 
+            </div>  
         </div>
-
-        <!-- Boton para procesar la compra -->
-        <button type="submit" class="btn btn-success">Procesar Compra</button>
-    </form>
-
-    <!-- Mostrar el total de la compra -->
-    <p>Total de la compra: ${{ total }}</p>
-
+    </div>
 </div>
 
 {% endblock %}
