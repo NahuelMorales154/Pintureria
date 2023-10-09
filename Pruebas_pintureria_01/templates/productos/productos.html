@@ -12,52 +12,51 @@
 
 <div class="container mt-4">
     <!-- Barra superior con filtros y botones -->
-    <div>
-        <div style="display: grid; grid-template-columns: repeat(3,1fr);">
-            <div>
-                <!-- Formulario para busqueda por nombre -->
-                <form class="form-inline">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre" aria-label="Buscar" name="search">
-                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
-                </form>            
-            </div>
+    <div style="display: flex; justify-content: space-between; margin: 0 0 20px 0;">
+        <div>
+            <!-- Formulario para busqueda por nombre -->
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre" aria-label="Buscar" name="search">
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
+            </form>            
+        </div>
 
-            <div>
-                <!-- Formulario para filtrar por tipo -->
-                <form class="form-inline" style="justify-content: center;">
-                    <!-- Opciones de tipo cargadas desde la base de datos -->
-                    <select class="form-control mr-sm-2" name="filterTipo">
-                        <option value="">Todos los tipos</option>
-                        {% for tipo in tipos %}
-                            <option value="{{ tipo }}">{{ tipo }}</option>
-                        {% endfor %}
-                    </select>
-                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Filtrar</button>
-                </form>            
-            </div>
+        <div>
+            <!-- Formulario para filtrar por tipo -->
+            <form class="form-inline" style="justify-content: center;">
+                <!-- Opciones de tipo cargadas desde la base de datos -->
+                <select class="form-control mr-sm-2" name="filterTipo">
+                    <option value="">Todos los tipos</option>
+                    {% for tipo in tipos %}
+                        <option value="{{ tipo }}">{{ tipo }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Filtrar</button>
+            </form>            
+        </div>
 
-            <div>
-                <!-- Formulario para aplicar descuento de precios -->
-                <form class="form-inline" action="{{ url_for('apply_discount') }}" method="post" style="justify-content: center;">
-                    <div class="form-group">
-                        <label for="discountPercentage" style="margin-right: 0.5rem!important;">Cambio de precios:</label>
-                        <div class="input-group">
-                            <!-- Entrada de porcentaje de descuento -->
-                            <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="-100" max="100" step="0.01" required>
-                            <div class="input-group-append">
-                                <!-- Boton para aplicar descuento -->
-                                <button type="submit" class="btn btn-warning">Aplicar</button>
-                            </div>
+         <div>
+            <!-- Formulario para aplicar descuento de precios -->
+            <form class="form-inline" action="{{ url_for('apply_discount') }}" method="post" style="justify-content: center;">
+                <div class="form-group">
+                    <label for="discountPercentage" style="margin-right: 0.5rem!important;">Cambio de precios:</label>
+                    <div class="input-group">
+                        <!-- Entrada de porcentaje de descuento -->
+                        <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="-100" max="100" step="0.01" required>
+                        <div class="input-group-append">
+                            <!-- Boton para aplicar descuento -->
+                            <button type="submit" class="btn btn-warning">Aplicar</button>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div style="grid-column: 1/-1; text-align: right;">
-                <!-- Boton para ingresar un nuevo producto -->
-                <a class="btn btn-success" href="{{ url_for('create')}}" style="margin: 16px 0;">Producto Nuevo</a>    
-            </div>            
+                </div>
+            </form>
         </div>
+        <div style="text-align: right; ">
+            <!-- Boton para ingresar un nuevo producto -->
+            <a class="btn btn-success" href="{{ url_for('create')}}">Producto Nuevo</a>    
+        </div>            
     </div>
+</div>
 
     <!-- Tabla de productos -->
     <div class="table-responsive contenedor_interno">
@@ -85,17 +84,21 @@
                     <td>{{ producto[4] }}</td>
                     <td>${{ producto[5] }}</td>
                     <td>{{ producto[8] }}</td>
-                    <td>
-                        <!-- Verificar cantidad minima con stock actual -->
-                        {% if producto[4] <= producto[7] %}
-                            <span class="badge badge-warning float-right">¡Stock bajo!</span>
-                        {% endif %}
-                        <!-- Boton para editar -->
-                        <a class="btn btn-primary btn-sm" href="/edit/{{ producto[0] }}">Editar</a>
-                        <!-- Boton para eliminar con confirmacion -->
-                        <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ producto[0] }}')">Eliminar</a>
-                        <!-- Boton para agregar al pedido -->
-                        <a class="btn btn-success btn-sm" href="/add_to_cart/{{ producto[0] }}">+</a>
+                    <td style="display: flex; justify-content: space-between;">
+                        <div>
+                            <!-- Boton para editar -->
+                            <a class="btn btn-primary btn-sm" href="/edit/{{ producto[0] }}">Editar</a>
+                            <!-- Boton para eliminar con confirmacion -->
+                            <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ producto[0] }}')">Eliminar</a>
+                            <!-- Boton para agregar al pedido -->
+                            <a class="btn btn-success btn-sm" href="/add_to_cart/{{ producto[0] }}">+</a>
+                        </div>
+                        <div>
+                            <!-- Verificar cantidad minima con stock actual -->
+                            {% if producto[4] <= producto[7] %}
+                                <span class="badge badge-warning">¡Stock bajo!</span>
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
                 {% endif %}
