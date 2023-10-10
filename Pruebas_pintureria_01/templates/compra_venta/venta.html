@@ -1,0 +1,177 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<!--Css-->
+<style>
+    /* Estilo para eliminar el borde en los botones cuando estan seleccionados */
+    .btn:focus {
+        outline: none;
+        box-shadow: none;
+    }
+</style>
+
+<div class="container mt-4">
+    <!-- Barra superior con filtros y botones -->
+    <div style="display: flex; margin: 0 0 20px 0;">
+        <div style="padding-right: 10px;">
+            <!-- Formulario para busqueda por nombre -->
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre" aria-label="Buscar" name="search">
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
+            </form>            
+        </div>
+
+        <div>
+            <!-- Formulario para filtrar por tipo -->
+            <form class="form-inline" style="justify-content: center;">
+                <!-- Opciones de tipo cargadas desde la base de datos -->
+                <select class="form-control mr-sm-2" name="filterTipo">
+                    <option value="">Todos los tipos</option>
+                    {% for tipo in tipos %}
+                        <option value="{{ tipo }}">{{ tipo }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Filtrar</button>
+            </form>            
+        </div>       
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 75% 25%;">
+    <!-- Tabla de productos -->
+    <div class="table-responsive contenedor_interno">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Tipo</th>
+                    <th>Descripcion</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                {% if (search is none or search.lower() in producto[1].lower()) and (filterTipo is none or filterTipo == "" or filterTipo == producto[2]) %}
+                <tr>
+                    <td>{{ producto[1] }}</td>
+                    <td>{{ producto[6] }}</td>
+                    <td>{{ producto[2] }}</td>
+                    <td>{{ producto[3] }}</td>
+                    <td>{{ producto[4] }}</td>
+                    <td>${{ producto[5] }}</td>
+                    <!-- Acciones -->
+                    <td style="display: flex; justify-content: space-between;">
+                        <div>
+                            <!-- Boton para agregar al pedido -->
+                            <a class="btn btn-success btn-sm" href="/add_to_cart_vta/{{ producto[0] }}">+</a>
+                        </div>
+                        <div>
+                            <!-- Verificar cantidad minima con stock actual -->
+                            {% if producto[4] <= producto[7] %}
+                                <span class="badge badge-warning">¡Stock bajo!</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Orden de venta -->
+    <div>
+        <div style="margin-left: 10px;">
+            <div>
+                <div style="max-height: 40vh; overflow-y: auto;">
+                    <div style="padding: 3% 5%; background-color: beige;">
+                        <!-- Lista de productos en el pedido -->
+                        <ul>
+                            <div style="display: flex; justify-content: space-between;">
+                                <div><h5>Productos:</h5></div>
+                                <div style="width: 25%;"><h5>Precio:</h5></div>
+                            </div>
+                            {% for item in lista_vta %}
+                                <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div>
+                                        <h6>{{ item['nombre'] }} (x{{ item['cantidad'] }})</h6>
+                                    </div>
+                                    <div style="text-align: right; width: 25%;">
+                                        <div>
+                                            <h6>${{ item['precio'] * item['cantidad'] }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <li>{{ item['nombre'] }} (x{{ item['cantidad'] }}) - Precio: ${{ item['precio'] }}</li> -->
+                            {% endfor %}
+                        </ul> 
+                    </div>  
+                </div>
+                <div style="margin-top: 10px;">
+                    <!-- Formulario para procesar la compra -->
+                    <form method="post" action="/procesar_compra">
+                        <!-- Campo para seleccionar el cliente -->
+                        <div class="form-group" style="display: grid; grid-template-columns: 25% 75%;">
+                            <label for="nombre_cliente" style="margin: auto;">Cliente: </label>
+                            <select class="form-control" id="nombre_cliente" name="nombre_cliente">
+                                {% for cliente in clientes_data %}
+                                    <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+        
+                        <!-- Campos ocultos para cada producto en el pedido -->
+                        {% for item in pedido %}
+                            <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                            <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
+                            <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
+                        {% endfor %}
+        
+                        <!-- Campo para ingresar el pago del cliente -->
+                        <div class="form-group" style="display: grid; grid-template-columns: 25% 75%;">
+                            <label for="pago_cliente" style="margin: auto;">Pago: </label>
+                            <input type="number" class="form-control" id="pago_cliente" name="pago_cliente" required>
+                        </div>
+        
+                        <!-- Mostrar el total de la compra -->
+                        <p>Total de la compra: ${{ total }}</p>  
+                        <div style="text-align: center;">
+                            <!-- Boton para procesar la compra -->
+                            <button type="submit" class="btn btn-success">Procesar Venta</button>                            
+                        </div>
+                    </form>
+        
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+<!-- Script de SweetAlert2 para confirmar eliminación -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmDelete(productID) {
+    // Mostrar un cuadro de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción no se puede deshacer',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirigir a la pagina de eliminación con el ID del producto
+            window.location.href = "/destroy/" + productID;
+        }
+    });
+}
+</script>

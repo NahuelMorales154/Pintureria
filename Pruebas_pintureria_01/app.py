@@ -13,8 +13,9 @@ app.config["MYSQL_DATABASE_PASSWORD"] = ""
 app.config["MYSQL_DATABASE_DB"] = "sistema"
 mysql.init_app(app)
 
-# Inicio del pedido
+# Inicio del pedido/orden de compra
 pedido = []
+lista_vta = []
 
 # Ruta principal
 @app.route("/")
@@ -565,6 +566,67 @@ def ranking():
     tipos = [tipo[0] for tipo in cursor.fetchall()]
 
     return render_template("productos/ranking.html", current_page=current_page, productos_ranking=productos_ranking, tipos=tipos, tipo_filtro=tipo_filtro)
+
+# VENTA
+# Ruta - Mostrar lista de productos con opciones de busqueda y filtrado
+@app.route("/venta")
+def venta():
+    current_page = 'ventas'
+    search = request.args.get("search")
+    filterTipo = request.args.get("filterTipo")
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT DISTINCT tipo FROM productos;")
+    tipos = [tipo[0] for tipo in cursor.fetchall()]
+
+    cursor.execute("SELECT id, nombre, tipo, descripcion, cantidad, precio, marca, minimo, salida FROM productos;")
+    productos = cursor.fetchall()
+
+    conn.commit()
+
+    # Orden de Venta
+    total = sum(item['precio'] * item['cantidad'] for item in lista_vta)
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Obtener lista de clientes desde la base de datos
+    cursor.execute("SELECT id, nombre FROM clientes_proveedores;")
+    clientes_data = cursor.fetchall()
+
+    conn.commit()
+
+    return render_template("compra_venta/venta.html", current_page=current_page, productos=productos, search=search, filterTipo=filterTipo, tipos=tipos, lista_vta=lista_vta, total=total, clientes_data=clientes_data)
+
+# Ruta - Agregar producto a la lista de venta
+@app.route('/add_to_cart_vta/<int:id>')
+def add_to_cart_vta(id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM productos WHERE id=%s", (id,))
+    producto = cursor.fetchone()
+
+    # Verificar si el producto ya está en la lista
+    for item in lista_vta:
+        if item['id'] == id:
+            # Si esta en la lista, aumenta la cantidad
+            item['cantidad'] += 1
+            break
+    else:
+        # Si no esta en la lista, agrega un nuevo elemento
+        lista_vta.append({
+            'id': id,
+            'nombre': producto[1],
+            'precio': producto[5],
+            'cantidad': 1
+        })
+
+    conn.commit()
+    return redirect("/venta")
+#
 
 # Iniciar la aplicacion Flask
 if __name__ == "__main__":

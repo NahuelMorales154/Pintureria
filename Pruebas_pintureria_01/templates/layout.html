@@ -64,7 +64,7 @@
                     </div>
                 </a>
     
-                <a href="#" class="menu-link {% if current_page == 'ventas' %}selected{% endif %}" data-page="ventas">
+                <a href="{{ url_for('venta') }}" class="menu-link {% if current_page == 'ventas' %}selected{% endif %}" data-page="ventas">
                     <div class="option">
                         <i class="icono" title="Ventas"><img src="../static/images/ico/cart-shopping-solid.svg" alt="Ventas"></i>
                         <h4>Ventas</h4>
@@ -129,7 +129,7 @@
         </main> <!-- continuacion  -->
 
         <!-- Pie de página -->
-        <footer class="bg-dark text-white text-center py-3">
+        <footer class="bg-dark text-white text-center py-3" style="position: sticky; bottom: 0;">
             Copyright de Pintureria Pehuajo &copy; {{ current_year }}
         </footer>
         </div>
