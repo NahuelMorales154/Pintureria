@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, session
 from flaskext.mysql import MySQL
 
 # Crear la aplicacion Flask
@@ -124,24 +124,48 @@ def storage():
     conn.commit()
     return redirect("/productos")
 
-# Ruta para aplicar descuento a los productos
+# Ruta para aplicar descuento/aumento a los productos
 @app.route('/apply_discount', methods=['POST'])
 def apply_discount():
-    discount_percentage = float(request.form['discountPercentage']) / 100
+    try:
+        discount_percentage_raw = request.form['discountPercentage']
+        
+        try:
+            discount_percentage = float(discount_percentage_raw)
+        except ValueError:
+            flash(f"Error: El descuento/aumento '{discount_percentage_raw}' no es un número válido.")
+            return redirect("/productos")
 
-    conn = mysql.connect()
-    cursor = conn.cursor()
+        product_type = request.form.get('tipoFiltro')
+        conn = mysql.connect()
+        cursor = conn.cursor()
 
-    # Obtener lista de productos
-    cursor.execute("SELECT * FROM productos;")
-    productos = cursor.fetchall()
+        if product_type:
+            cursor.execute("SELECT * FROM productos WHERE tipo = %s;", (product_type,))
+        else:
+            cursor.execute("SELECT * FROM productos;")
 
-    # Aplicar descuento a los precios de los productos
-    for producto in productos:
-        new_price = float(producto[5]) * (1 + discount_percentage)
-        cursor.execute("UPDATE productos SET precio=%s WHERE id=%s;", (new_price, producto[0]))
+        productos = cursor.fetchall()
 
-    conn.commit()
+        for producto in productos:
+            precio_index = 5  # Ajusta según la estructura de tu base de datos
+            precio_original = float(producto[precio_index])
+            # Calcula el nuevo precio teniendo en cuenta el descuento/aumento
+            new_price = precio_original * (1 + discount_percentage / 100)
+            print(f"Producto: {producto[1]}, Precio Original: {precio_original}, Nuevo Precio: {new_price}")
+            cursor.execute("UPDATE productos SET precio=%s WHERE id=%s;", (new_price, producto[0]))
+
+        conn.commit()
+        flash("Descuento/aumento aplicado exitosamente.")
+    except Exception as e:
+        print(f"Error al aplicar descuento/aumento: {str(e)}")
+        flash(f"Error al aplicar descuento/aumento: {str(e)}")
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
     return redirect("/productos")
 
 # Ruta para agregar un producto al pedido
@@ -567,6 +591,28 @@ def ranking():
 
     return render_template("productos/ranking.html", current_page=current_page, productos_ranking=productos_ranking, tipos=tipos, tipo_filtro=tipo_filtro)
 
+# Ruta para resetear el ranking
+@app.route('/reset_ranking', methods=['POST'])
+def reset_ranking():
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # Restablecer el campo de salida de todos los productos a 0
+        cursor.execute("UPDATE productos SET salida = 0;")
+
+        conn.commit()
+    except Exception as e:
+        # Manejar la excepción (imprimir o registrar el error)
+        print(f"Error al resetear el ranking: {str(e)}")
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
+    return redirect("/ranking")
+
 # VENTA
 # Ruta - Mostrar lista de productos con opciones de busqueda y filtrado
 @app.route("/venta")
@@ -626,7 +672,14 @@ def add_to_cart_vta(id):
 
     conn.commit()
     return redirect("/venta")
-#
+
+# Ruta para cancelar el pedido
+@app.route("/cancelar_venta")
+def cancelar_venta():
+    # Vaciar el pedido al hacer clic en "Cancelar Venta"
+    pedido.clear()
+    return redirect("/pedido")
+
 
 # Iniciar la aplicacion Flask
 if __name__ == "__main__":

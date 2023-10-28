@@ -3,11 +3,11 @@
 
 <div class="container mt-4">
     <!-- Titulo de la pagina -->
-    <h2>Pedido</h2>
+    <h2>Venta</h2>
     <div style="display: grid; grid-template-columns: repeat(2,1fr);">
         <div>
             <!-- Formulario para procesar la compra -->
-            <form method="post" action="/procesar_compra">
+            <form method="post" action="/procesar_compra" onsubmit="return confirm('¿Estás seguro de procesar la compra?');">
                 <!-- Campo para seleccionar el cliente -->
                 <div class="form-group">
                     <label for="nombre_cliente">Selecciona un cliente:</label>
@@ -36,6 +36,9 @@
 
                 <!-- Boton para procesar la compra -->
                 <button type="submit" class="btn btn-success">Procesar Compra</button>
+
+                <!-- Boton para cancelar la venta con confirmación -->
+                <a href="/cancelar_venta" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar la venta?');">Cancelar Venta</a>
             </form>
 
         </div>
@@ -62,7 +65,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <li>{{ item['nombre'] }} (x{{ item['cantidad'] }}) - Precio: ${{ item['precio'] }}</li> -->
                     {% endfor %}
                 </ul> 
             </div>  

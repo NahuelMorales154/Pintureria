@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<!--Css-->
+<!-- Css -->
 <style>
-    /* Estilo para eliminar el borde en los botones cuando estan seleccionados */
+    /* Estilo para eliminar el borde en los botones cuando están seleccionados */
     .btn:focus {
         outline: none;
         box-shadow: none;
@@ -14,11 +14,11 @@
     <!-- Barra superior con filtros y botones -->
     <div style="display: flex; margin: 0 0 20px 0;">
         <div style="padding-right: 10px;">
-            <!-- Formulario para busqueda por nombre -->
+            <!-- Formulario para búsqueda por nombre -->
             <form class="form-inline">
                 <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre" aria-label="Buscar" name="search">
                 <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
-            </form>            
+            </form>
         </div>
 
         <div>
@@ -32,8 +32,8 @@
                     {% endfor %}
                 </select>
                 <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Filtrar</button>
-            </form>            
-        </div>       
+            </form>
+        </div>
     </div>
 </div>
 
@@ -54,29 +54,29 @@
             </thead>
             <tbody>
                 {% for producto in productos %}
-                {% if (search is none or search.lower() in producto[1].lower()) and (filterTipo is none or filterTipo == "" or filterTipo == producto[2]) %}
-                <tr>
-                    <td>{{ producto[1] }}</td>
-                    <td>{{ producto[6] }}</td>
-                    <td>{{ producto[2] }}</td>
-                    <td>{{ producto[3] }}</td>
-                    <td>{{ producto[4] }}</td>
-                    <td>${{ producto[5] }}</td>
-                    <!-- Acciones -->
-                    <td style="display: flex; justify-content: space-between;">
-                        <div>
-                            <!-- Boton para agregar al pedido -->
-                            <a class="btn btn-success btn-sm" href="/add_to_cart_vta/{{ producto[0] }}">+</a>
-                        </div>
-                        <div>
-                            <!-- Verificar cantidad minima con stock actual -->
-                            {% if producto[4] <= producto[7] %}
-                                <span class="badge badge-warning">¡Stock bajo!</span>
-                            {% endif %}
-                        </div>
-                    </td>
-                </tr>
-                {% endif %}
+                    {% if (search is none or search.lower() in producto[1].lower()) and (filterTipo is none or filterTipo == "" or filterTipo == producto[2]) %}
+                        <tr>
+                            <td>{{ producto[1] }}</td>
+                            <td>{{ producto[6] }}</td>
+                            <td>{{ producto[2] }}</td>
+                            <td>{{ producto[3] }}</td>
+                            <td>{{ producto[4] }}</td>
+                            <td>${{ producto[5] }}</td>
+                            <!-- Acciones -->
+                            <td style="display: flex; justify-content: space-between;">
+                                <div>
+                                    <!-- Botón para agregar al pedido -->
+                                    <a class="btn btn-success btn-sm" href="/add_to_cart_vta/{{ producto[0] }}">+</a>
+                                </div>
+                                <div>
+                                    <!-- Verificar cantidad mínima con stock actual -->
+                                    {% if producto[4] <= producto[7] %}
+                                        <span class="badge badge-warning">¡Stock bajo!</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>
@@ -107,8 +107,8 @@
                                 </div>
                                 <!-- <li>{{ item['nombre'] }} (x{{ item['cantidad'] }}) - Precio: ${{ item['precio'] }}</li> -->
                             {% endfor %}
-                        </ul> 
-                    </div>  
+                        </ul>
+                    </div>
                 </div>
                 <div style="margin-top: 10px;">
                     <!-- Formulario para procesar la compra -->
@@ -122,30 +122,30 @@
                                 {% endfor %}
                             </select>
                         </div>
-        
+
                         <!-- Campos ocultos para cada producto en el pedido -->
                         {% for item in pedido %}
                             <input type="hidden" name="productos[]" value="{{ item['id'] }}">
                             <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
                             <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
                         {% endfor %}
-        
+
                         <!-- Campo para ingresar el pago del cliente -->
                         <div class="form-group" style="display: grid; grid-template-columns: 25% 75%;">
                             <label for="pago_cliente" style="margin: auto;">Pago: </label>
                             <input type="number" class="form-control" id="pago_cliente" name="pago_cliente" required>
                         </div>
-        
+
                         <!-- Mostrar el total de la compra -->
-                        <p>Total de la compra: ${{ total }}</p>  
+                        <p>Total de la compra: ${{ total }}</p>
                         <div style="text-align: center;">
-                            <!-- Boton para procesar la compra -->
-                            <button type="submit" class="btn btn-success">Procesar Venta</button>                            
+                            <!-- Botón para procesar la compra -->
+                            <button type="submit" class="btn btn-success">Procesar Venta</button>
+                            <!-- Botón para cancelar el pedido -->
+                                <a href="/cancelar_venta" class="btn btn-danger">Cancelar Venta</a>
                         </div>
                     </form>
-        
                 </div>
-                
             </div>
         </div>
     </div>
