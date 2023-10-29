@@ -680,6 +680,62 @@ def cancelar_venta():
     pedido.clear()
     return redirect("/pedido")
 
+@app.route('/realizar_pago/<int:id>', methods=['GET'])
+def realizar_pago(id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # conseguir info del cliente a partir del ID
+    cursor.execute("SELECT id, nombre, saldo FROM clientes_proveedores WHERE id=%s", (id,))
+    cliente = cursor.fetchone()
+
+    conn.commit()
+    conn.close()
+
+    return render_template("clientes/realizar_pago.html", cliente=cliente)
+
+@app.route('/procesar_pago/<int:id>', methods=['POST'])
+def procesar_pago(id):
+    if request.method == 'POST':
+        try:
+            # Conseguir monto del formulario
+            monto_pagado = float(request.form.get('monto'))
+
+            conn = mysql.connect()
+            cursor = conn.cursor()
+
+            # conseguir info del cliente antes de realizar el pago
+            cursor.execute("SELECT nombre, saldo FROM clientes_proveedores WHERE id=%s", (id,))
+            cliente_info = cursor.fetchone()
+
+            nombre_cliente = cliente_info[0]
+            saldo_actual = cliente_info[1]
+
+            # Calcula la nueva deuda sumando el monto pagado al saldo actual
+            nueva_deuda = saldo_actual + monto_pagado
+
+            # Inserta la información en la tabla detalles_compras
+            cursor.execute("INSERT INTO detalles_compra (productos, total, pago, diferencia_cliente, nombre_cliente) VALUES (%s, %s, %s, %s, %s)",
+                           ('Pago de saldo', saldo_actual, monto_pagado, nueva_deuda, nombre_cliente))
+            conn.commit()
+
+            # Actualiza el saldo del cliente en la base de datos
+            cursor.execute("UPDATE clientes_proveedores SET saldo=%s WHERE id=%s", (nueva_deuda, id))
+            conn.commit()
+
+            flash("Pago procesado exitosamente.")
+        except Exception as e:
+            print(f"Error al procesar pago: {str(e)}")
+            flash("Error al procesar el pago. Por favor, inténtalo de nuevo.")
+
+        finally:
+            conn.close()
+
+        # Redirige a la página principal de clientes después de procesar el pago
+        return redirect("/clientes")
+
+    # Si la solicitud no es un POST, redirige a la página principal
+    return redirect("/clientes")
 
 # Iniciar la aplicacion Flask
 if __name__ == "__main__":

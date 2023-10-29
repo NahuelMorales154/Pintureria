@@ -35,6 +35,8 @@
                     <a class="btn btn-primary btn-sm" href="/editar_cliente/{{ cliente[0] }}">Editar</a>
                     <!-- Botón para eliminar con confirmación -->
                     <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ cliente[0] }}')">Eliminar</a>
+                    <!-- Botón para realizar pago -->
+                    <a class="btn btn-success btn-sm" href="/realizar_pago/{{ cliente[0] }}">Realizar Pago</a>
                 </td>
             </tr>
             {% endif %}
@@ -65,4 +67,5 @@ function confirmDelete(clienteID) {
     });
 }
 </script>
+
 {% endblock %}
