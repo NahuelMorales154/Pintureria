@@ -3,19 +3,26 @@
 
 <div class="container mt-4">
     <!-- Titulo de la pagina -->
-    <h2>Venta</h2>
+    <h2>Carga de productos</h2>
     <div style="display: grid; grid-template-columns: repeat(2,1fr);">
         <div>
-            <!-- Formulario para procesar la compra -->
+            <!-- Formulario para procesar la compra /venta -->
             <form method="post" action="/procesar_compra" onsubmit="return confirm('¿Estás seguro de procesar la compra?');">
-                <!-- Campo para seleccionar el cliente -->
+                <!-- Campo para seleccionar el cliente / proveedor -->
                 <div class="form-group">
-                    <label for="nombre_cliente">Selecciona un cliente:</label>
+                    <label for="nombre_proveedor">Selecciona un Proveedor:</label>
+                    <select class="form-control" id="nombre_proveedor" name="nombre_proveedor">
+                        {% for proveedor in proveedor_data %}
+                            <option value="{{ proveedor[0] }}">{{ proveedor[1] }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <!-- <label for="nombre_cliente">Selecciona un cliente:</label>
                     <select class="form-control" id="nombre_cliente" name="nombre_cliente">
                         {% for cliente in clientes_data %}
                             <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
                         {% endfor %}
-                    </select>
+                    </select> -->
                 </div>
 
                 <!-- Campos ocultos para cada producto en el pedido -->
@@ -25,9 +32,9 @@
                     <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
                 {% endfor %}
 
-                <!-- Campo para ingresar el pago del cliente -->
+                <!-- Campo para ingresar el pago al cliente / proveedor -->
                 <div class="form-group">
-                    <label for="pago_cliente">Pago del cliente:</label>
+                    <label for="pago_cliente">Pago:</label>
                     <input type="number" class="form-control" id="pago_cliente" name="pago_cliente" required>
                 </div>
 
@@ -38,7 +45,7 @@
                 <button type="submit" class="btn btn-success">Procesar Compra</button>
 
                 <!-- Boton para cancelar la venta con confirmación -->
-                <a href="/cancelar_venta" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar la venta?');">Cancelar Venta</a>
+                <a href="/cancelar_pedido" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar el pedido?');">Cancelar Venta</a>
             </form>
 
         </div>

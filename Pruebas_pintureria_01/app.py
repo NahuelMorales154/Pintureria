@@ -56,7 +56,15 @@ def products():
     productos = cursor.fetchall()
 
     conn.commit()
-    return render_template("productos/productos.html", current_page=current_page, productos=productos, search=search, filterTipo=filterTipo, tipos=tipos)
+
+    # Orden de Venta
+    total = sum(item['precio'] * item['cantidad'] for item in pedido)
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    conn.commit()
+    return render_template("productos/productos.html", current_page=current_page, productos=productos, search=search, filterTipo=filterTipo, tipos=tipos, lista_pedido=pedido, total=total)
 
 @app.route("/destroy/<int:id>")
 def destroy(id):
@@ -203,13 +211,13 @@ def mostrar_pedido():
     conn = mysql.connect()
     cursor = conn.cursor()
 
-    # Obtener lista de clientes desde la base de datos
-    cursor.execute("SELECT id, nombre FROM clientes_proveedores;")
-    clientes_data = cursor.fetchall()
+    # Obtener lista de clientes / proveedores desde la base de datos
+    cursor.execute("SELECT id, nombre FROM clientes_proveedores WHERE tipo = 2;")
+    proveedor_data = cursor.fetchall()
 
     conn.commit()
 
-    return render_template("productos/pedido.html", pedido=pedido, total=total, clientes_data=clientes_data)
+    return render_template("productos/pedido.html", pedido=pedido, total=total, proveedor_data = proveedor_data)
 
 # Ruta para mostrar la lista de clientes
 @app.route('/clientes')
@@ -639,7 +647,7 @@ def venta():
     cursor = conn.cursor()
 
     # Obtener lista de clientes desde la base de datos
-    cursor.execute("SELECT id, nombre FROM clientes_proveedores;")
+    cursor.execute("SELECT id, nombre FROM clientes_proveedores WHERE tipo = 1;")
     clientes_data = cursor.fetchall()
 
     conn.commit()
@@ -673,10 +681,17 @@ def add_to_cart_vta(id):
     conn.commit()
     return redirect("/venta")
 
-# Ruta para cancelar el pedido
+# Ruta para cancelar el venta
 @app.route("/cancelar_venta")
 def cancelar_venta():
     # Vaciar el pedido al hacer clic en "Cancelar Venta"
+    lista_vta.clear()
+    return redirect("/venta")
+
+# Ruta para cancelar el pedido
+@app.route("/cancelar_pedido")
+def cancelar_pedido():
+    # Vaciar el pedido al hacer clic en "Cancelar compra" // en el caso de comprar productos para el local
     pedido.clear()
     return redirect("/pedido")
 

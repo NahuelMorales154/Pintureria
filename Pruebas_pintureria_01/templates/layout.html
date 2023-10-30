@@ -42,7 +42,14 @@
                         <h4>Productos</h4>
                     </div>
                 </a>
-    
+
+                <a href="{{ url_for('venta') }}" class="menu-link {% if current_page == 'ventas' %}selected{% endif %}" data-page="ventas">
+                    <div class="option">
+                        <i class="icono" title="Ventas"><img src="../static/images/ico/cart-shopping-solid.svg" alt="Ventas"></i>
+                        <h4>Ventas</h4>
+                    </div>
+                </a>
+
                 <a href="{{ url_for('mostrar_pedido') }}" class="menu-link {% if current_page == 'pedido' %}selected{% endif %}" data-page="pedido">
                     <div class="option">
                         <i class="icono" title="Pedido"><img src="../static/images/ico/box-open-solid.svg" alt="Pedido"></i>
@@ -61,13 +68,6 @@
                     <div class="option">
                         <i class="icono" title="Proveedores"><img src="../static/images/ico/truck-solid.svg" alt="Proveedores"></i>
                         <h4>Proveedores</h4>
-                    </div>
-                </a>
-    
-                <a href="{{ url_for('venta') }}" class="menu-link {% if current_page == 'ventas' %}selected{% endif %}" data-page="ventas">
-                    <div class="option">
-                        <i class="icono" title="Ventas"><img src="../static/images/ico/cart-shopping-solid.svg" alt="Ventas"></i>
-                        <h4>Ventas</h4>
                     </div>
                 </a>
     

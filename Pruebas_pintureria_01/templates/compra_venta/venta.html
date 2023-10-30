@@ -60,19 +60,25 @@
                             <td>{{ producto[6] }}</td>
                             <td>{{ producto[2] }}</td>
                             <td>{{ producto[3] }}</td>
-                            <td>{{ producto[4] }}</td>
+                            <td>
+                                {% if producto[4] <= producto[7] %}
+                                    <p style="color: #FFC107; font-weight: bold; margin: 0;">{{ producto[4] }}</p>
+                                {% else %}
+                                    {{ producto[4] }}
+                                {% endif %}
+                            </td>
                             <td>${{ producto[5] }}</td>
                             <!-- Acciones -->
                             <td style="display: flex; justify-content: space-between;">
                                 <div>
                                     <!-- Botón para agregar al pedido -->
-                                    <a class="btn btn-success btn-sm" href="/add_to_cart_vta/{{ producto[0] }}">+</a>
+                                    <a class="btn btn-success btn-sm" href="/add_to_cart_vta/{{ producto[0] }}"><img src="../../static/images/ico/plus-solid.svg" alt="Agregar al Pedido" style="height: 20px;"></a>
                                 </div>
                                 <div>
                                     <!-- Verificar cantidad mínima con stock actual -->
-                                    {% if producto[4] <= producto[7] %}
+                                    <!-- {% if producto[4] <= producto[7] %}                    temporalmente desactivado
                                         <span class="badge badge-warning">¡Stock bajo!</span>
-                                    {% endif %}
+                                    {% endif %} -->
                                 </div>
                             </td>
                         </tr>
@@ -95,9 +101,9 @@
                             </div>
                             {% for item in lista_vta %}
                                 <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
-                                <div style="display: flex; justify-content: space-between;">
-                                    <div>
-                                        <h6>{{ item['nombre'] }} (x{{ item['cantidad'] }})</h6>
+                                <div style="display: flex; justify-content: space-between; margin: 2px 0;">
+                                    <div style="display: flex;">
+                                        <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item['nombre'] }}</h6><h6>(x{{ item['cantidad'] }})</h6>
                                     </div>
                                     <div style="text-align: right; width: 25%;">
                                         <div>
@@ -141,7 +147,7 @@
                         <div style="text-align: center;">
                             <!-- Botón para procesar la compra -->
                             <button type="submit" class="btn btn-success">Procesar Venta</button>
-                            <!-- Botón para cancelar el pedido -->
+                            <!-- Botón para cancelar el venta -->
                                 <a href="/cancelar_venta" class="btn btn-danger">Cancelar Venta</a>
                         </div>
                     </form>
