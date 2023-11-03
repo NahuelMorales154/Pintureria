@@ -93,71 +93,69 @@
             <div>
                 <div style="max-height: 40vh; overflow-y: auto;">
                     <div style="padding: 3% 5%; background-color: beige;">
-                        <!-- Lista de productos en el pedido -->
-                        <ul>
-                            <div style="display: flex; justify-content: space-between;">
-                                <div><h5>Productos:</h5></div>
-                                <div style="width: 25%;"><h5>Precio:</h5></div>
-                            </div>
+                        <!-- Lista de productos en la venta -->
+                        <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                            <h5>Productos:</h5><h5 style="text-align: center;">Cant:</h5><h5 style="text-align: center;">Precio:</h5>
                             {% for item in lista_vta %}
                                 <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
-                                <div style="display: flex; justify-content: space-between; margin: 2px 0;">
-                                    <div style="display: flex;">
-                                        <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item['nombre'] }}</h6><h6>(x{{ item['cantidad'] }})</h6>
+                                <div style="grid-column: 1/-1; display: grid; grid-template-columns: repeat(3,1fr); margin: 2px 0;">
+                                    <div>
+                                        <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item['nombre'] }}">{{ item['nombre'] }}</h6>
                                     </div>
-                                    <div style="text-align: right; width: 25%;">
-                                        <div>
-                                            <h6>${{ item['precio'] * item['cantidad'] }}</h6>
-                                        </div>
+                                    <div style="text-align: center;">
+                                        <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                                        <input type="number" class="cantidad" name="cantidades[]" value="{{ item['cantidad'] }}" style="width: 100%; text-align: center;">
+                                        <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <h6>${{ item['precio'] * item['cantidad'] }}</h6>
                                     </div>
                                 </div>
-                                <!-- <li>{{ item['nombre'] }} (x{{ item['cantidad'] }}) - Precio: ${{ item['precio'] }}</li> -->
                             {% endfor %}
-                        </ul>
+                        </div>
                     </div>
                 </div>
                 <div style="margin-top: 10px;">
-                    <!-- Formulario para procesar la compra -->
-                    <form method="post" action="/procesar_compra">
-                        <!-- Campo para seleccionar el cliente -->
-                        <div class="form-group" style="display: grid; grid-template-columns: 25% 75%;">
-                            <label for="nombre_cliente" style="margin: auto;">Cliente: </label>
-                            <select class="form-control" id="nombre_cliente" name="nombre_cliente">
-                                {% for cliente in clientes_data %}
-                                    <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Campos ocultos para cada producto en el pedido -->
-                        {% for item in pedido %}
+                    <!-- Formulario para procesar la venta -->
+                    <form method="post" action="/procesar_venta">
+                        <!-- Campos ocultos para cada producto en la venta -->
+                        {% for item in lista_vta %}
                             <input type="hidden" name="productos[]" value="{{ item['id'] }}">
                             <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
                             <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
                         {% endfor %}
-
-                        <!-- Campo para ingresar el pago del cliente -->
-                        <div class="form-group" style="display: grid; grid-template-columns: 25% 75%;">
-                            <label for="pago_cliente" style="margin: auto;">Pago: </label>
-                            <input type="number" class="form-control" id="pago_cliente" name="pago_cliente" required>
-                        </div>
-
-                        <!-- Mostrar el total de la compra -->
-                        <p>Total de la compra: ${{ total }}</p>
                         <div style="text-align: center;">
                             <!-- Botón para procesar la compra -->
                             <button type="submit" class="btn btn-success">Procesar Venta</button>
                             <!-- Botón para cancelar el venta -->
-                                <a href="/cancelar_venta" class="btn btn-danger">Cancelar Venta</a>
+                            <a href="/cancelar_venta_in" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar la venta?');">Cancelar Venta</a>
                         </div>
                     </form>
                 </div>
             </div>
+            <!-- {% for item in lista_vta %}
+                <h6>{{ item }}</h6>
+            {% endfor %} -->
         </div>
     </div>
 </div>
 
-{% endblock %}
+<!-- Script de Actualizacion de cantidades -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $(".cantidad").on("input", function() {
+      var cantidad = $(this).val();
+      var id = $(this).siblings("input[name='productos[]']").val();
+      
+      // Envia los datos al servidor utilizando AJAX
+        $.ajax({
+            type: "POST",
+            url: `/actualizar_cantidad_venta/${id}/${cantidad}`
+        });
+    });
+  });
+</script>
 
 <!-- Script de SweetAlert2 para confirmar eliminación -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -181,3 +179,5 @@ function confirmDelete(productID) {
     });
 }
 </script>
+
+{% endblock %}

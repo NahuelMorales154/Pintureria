@@ -120,7 +120,7 @@
                                     <!-- Boton para eliminar con confirmación -->
                                     <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ producto[0] }}')"><img src="../../static/images/ico/trash-solid.svg" alt="Eliminar" style="height: 20px;"></a>
                                     <!-- Boton para agregar al pedido -->
-                                    <a class="btn btn-success btn-sm" href="/add_to_cart/{{ producto[0] }}"><img src="../../static/images/ico/plus-solid.svg" alt="Agregar al Pedido" style="height: 20px;"></a>
+                                    <a class="btn btn-success btn-sm" href="/add_to_cart_ped/{{ producto[0] }}"><img src="../../static/images/ico/plus-solid.svg" alt="Agregar al Pedido" style="height: 20px;"></a>
                                 </div>
                                 <div>
                                     <!-- Verificar cantidad mínima con stock actual --> 
@@ -151,20 +151,16 @@
                                 <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
                                 <div style="display: flex; justify-content: space-between; margin: 2px 0;">
                                     <div style="display: flex;">
-                                        <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item['nombre'] }}</h6><h6>(x{{ item['cantidad'] }})</h6>
+                                        <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item['nombre'] }}">{{ item['nombre'] }}</h6>
                                     </div>
                                     <div style="text-align: right; width: 25%;">
                                         <div>
-                                            <!-- <h6>${{ item['precio'] * item['cantidad'] }}</h6> -->
-                                            <form action="">
-                                                <input type="hidden" name="productos[]" value="{{ item['id'] }}">
-                                                <input style="width: 100%; text-align: center;" name="cantidades[]" value="{{ item['cantidad'] }}">
-                                                <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
-                                            </form>
+                                            <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                                            <input type="number" class="cantidad" name="cantidades[]" value="{{ item['cantidad'] }}" style="width: 100%; text-align: center;">
+                                            <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <li>{{ item['nombre'] }} (x{{ item['cantidad'] }}) - Precio: ${{ item['precio'] }}</li> -->
                             {% endfor %}
                         </ul>
                     </div>
@@ -173,25 +169,43 @@
                     <!-- Formulario para procesar la compra -->
                     <form method="post" action="/procesar_compra">
                         <!-- Campos ocultos para cada producto en el pedido -->
-                        {% for item in pedido %}
+                        {% for item in lista_pedido %}
                             <input type="hidden" name="productos[]" value="{{ item['id'] }}">
                             <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
                             <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
                         {% endfor %}
-                        <div style="text-align: center;">
+                        <div style="text-align: center; display: flex; gap: 10px;">
                             <!-- Botón para procesar la compra -->
-                            <button type="submit" class="btn btn-success">Procesar Compra</button>
+                            <button type="submit" class="btn btn-success">Procesar Pedido</button>
+                            <!-- Boton para cancelar la venta con confirmación -->
+                            <a href="/cancelar_pedido_in" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar el pedido?');">Cancelar Pedido</a>
                         </div>
                     </form>
                 </div>
             </div>
+            <!-- {% for item in lista_pedido %}
+                <h6>{{ item }}</h6>
+            {% endfor %} -->
         </div>
     </div>
 </div>    
 
-
-
-
+<!-- Script de Actualizacion de cantidades -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $(".cantidad").on("input", function() {
+      var cantidad = $(this).val();
+      var id = $(this).siblings("input[name='productos[]']").val();
+      
+      // Envia los datos al servidor utilizando AJAX
+        $.ajax({
+            type: "POST",
+            url: `/actualizar_cantidad_pedido/${id}/${cantidad}`
+        });
+    });
+  });
+</script> 
 
 <!-- Script de SweetAlert2 para confirmar eliminación -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

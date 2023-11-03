@@ -3,23 +3,23 @@
 
 <div class="container mt-4">
     <!-- Titulo de la pagina -->
-    <h2>Carga de productos</h2>
+    <h2>venta de producto</h2>
     <div style="display: grid; grid-template-columns: repeat(2,1fr);">
         <div>
             <!-- Formulario para procesar la compra /venta -->
-            <form method="post" action="/procesar_compra" onsubmit="return confirm('¿Estás seguro de procesar la compra?');">
+            <form method="post" action="/procesar_venta" onsubmit="return confirm('¿Estás seguro de procesar la compra?');">
                 <!-- Campo para seleccionar el cliente / proveedor -->
                 <div class="form-group">
-                    <label for="nombre_proveedor">Selecciona un Proveedor:</label>
-                    <select class="form-control" id="nombre_proveedor" name="nombre_proveedor">
-                        {% for proveedor in proveedor_data %}
-                            <option value="{{ proveedor[0] }}">{{ proveedor[1] }}</option>
+                    <label for="nombre_cliente">Selecciona un cliente:</label>
+                    <select class="form-control" id="nombre_cliente" name="nombre_cliente">
+                        {% for cliente in cliente_data %}
+                            <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
                 <!-- Campos ocultos para cada producto en el pedido -->
-                {% for item in pedido %}
+                {% for item in lista_vta %}
                     <input type="hidden" name="productos[]" value="{{ item['id'] }}">
                     <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
                     <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
@@ -37,14 +37,14 @@
                 <div style="display: flex; justify-content: space-between;">
                     <div>
                         <!-- Boton para procesar la compra -->
-                        <button type="submit" class="btn btn-success">Procesar Compra</button>
+                        <button type="submit" class="btn btn-success">Procesar venta</button>
 
                         <!-- Boton para cancelar la venta con confirmación -->
-                        <a href="/cancelar_pedido" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar el pedido?');">Cancelar Compra</a>
+                        <a href="/cancelar_venta" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar el pedido?');">Cancelar venta</a>
                     </div>
                     <div>
                         <!-- Boton para volver a la lista de productos -->
-                        <a href="/productos" class="btn btn-success" style="padding: 2px;"><img src="../../static/images/ico/table-list-solid.svg" style="height: 2rem;"></a>
+                        <a href="/venta" class="btn btn-success" style="padding: 2px;"><img src="../../static/images/ico/cart-shopping-solid.svg" style="height: 2rem;"></a>
                     </div>
                 </div>
             </form>
@@ -55,11 +55,11 @@
                 <!-- Lista de productos en el pedido -->
                 <div style="display: grid; grid-template-columns: repeat(3,1fr);">
                     <h5>Productos:</h5><h5 style="text-align: center;">Cant:</h5><h5 style="text-align: center;">Precio:</h5>
-                    {% for item in pedido %}
+                    {% for item in lista_vta %}
                         <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
                         <div style="grid-column: 1/-1; display: grid; grid-template-columns: repeat(3,1fr); margin: 2px 0;">
                             <div>
-                                <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item['nombre'] }}">{{ item['nombre'] }}</h6>
+                                <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item['nombre'] }}</h6>
                             </div>
                             <div style="text-align: center;">
                                 <input type="hidden" name="productos[]" value="{{ item['id'] }}">
@@ -78,7 +78,7 @@
                     {% endfor %}
                 </div> 
             </div>
-            <a href="/actualizar_pedido" class="btn btn-success">Actualizar Pedido</a>  
+            <a href="/actualizar_venta" class="btn btn-success">Actualizar venta</a>  
         </div>
     </div>
 </div>
@@ -94,7 +94,7 @@
       // Envia los datos al servidor utilizando AJAX
         $.ajax({
             type: "POST",
-            url: `/actualizar_cantidad_pedido/${id}/${cantidad}`
+            url: `/actualizar_cantidad_venta/${id}/${cantidad}`
         });
     });
   });

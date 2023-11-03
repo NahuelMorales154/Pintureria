@@ -177,8 +177,8 @@ def apply_discount():
     return redirect("/productos")
 
 # Ruta para agregar un producto al pedido
-@app.route('/add_to_cart/<int:id>')
-def add_to_cart(id):
+@app.route('/add_to_cart_ped/<int:id>')
+def add_to_cart_ped(id):
     conn = mysql.connect()
     cursor = conn.cursor()
 
@@ -202,6 +202,20 @@ def add_to_cart(id):
 
     conn.commit()
     return redirect("/productos")
+
+# Actualizar lista de pedido
+@app.route('/actualizar_cantidad_pedido/<int:id>/<int:cantidad>', methods=['POST'])
+def actualizar_cantidad_pedido(id, cantidad):
+    for item in pedido:
+        if item['id'] == id:
+            # Si está en el pedido, aumenta la cantidad
+            item['cantidad'] = cantidad
+            print(item)
+            break
+    return
+@app.route("/actualizar_pedido")
+def actualizar_pedido():
+    return redirect("/pedido") 
 
 # Ruta para mostrar la pagina del pedido
 @app.route("/pedido")
@@ -475,10 +489,7 @@ def restar_stock(producto_id, cantidad_comprada):
 
     conn.commit()
 
-
-
 #procesar compra
-
 @app.route("/procesar_compra", methods=["POST"])
 def procesar_compra():
     current_page = 'pedido'
@@ -571,6 +582,114 @@ def procesar_compra():
     flash("Compra procesada exitosamente.")
     return render_template("productos/pedido.html", current_page=current_page)
 
+# Ruta para mostrar la pagina de la venta
+@app.route("/orden_venta")
+def mostrar_orden_venta():
+    total = sum(item['precio'] * item['cantidad'] for item in lista_vta)
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Obtener lista de clientes / proveedores desde la base de datos
+    cursor.execute("SELECT id, nombre FROM clientes_proveedores WHERE tipo = 1;")
+    cliente_data = cursor.fetchall()
+
+    conn.commit()
+
+    return render_template("compra_venta/orden_venta.html", lista_vta=lista_vta, total=total, cliente_data = cliente_data)
+
+#procesar venta
+@app.route("/procesar_venta", methods=["POST"])
+def procesar_venta():
+    current_page = 'orden_venta'
+    # Obtener la lista de productos y cantidades de la venta
+    lista_productos = ", ".join([f"{item['nombre']} (x{item['cantidad']})" for item in lista_vta])
+
+    # Calcular el total de la venta
+    total_compra = sum(item['precio'] * item['cantidad'] for item in lista_vta)
+
+    # Obtener el nombre del cliente seleccionado
+    id_cliente = request.form.get('nombre_cliente')
+    
+    # Verificar si id_cliente es None y manejarlo
+    if id_cliente is None:
+        flash("Error: Selecciona un cliente.")
+        return redirect("/orden_venta")
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Obtener el nombre del cliente a partir de su ID
+    cursor.execute("SELECT nombre FROM clientes_proveedores WHERE id=%s", (id_cliente,))
+    resultado_cliente = cursor.fetchone()
+
+    # Verificar si result_cliente es None y manejarlo
+    if resultado_cliente is None:
+        flash("Error: Cliente no encontrado.")
+        return redirect("/orden_venta")
+
+    nombre_cliente = resultado_cliente[0]
+
+    # Obtener el monto pagado por el cliente desde el formulario
+    monto_pagado = request.form.get('pago_cliente')
+
+    # Verificar si monto_pagado es None y manejarlo
+    if monto_pagado is None:
+        flash("Error: Ingresa el monto pagado por el cliente.")
+        return redirect("/orden_venta")
+
+    # Convertir monto_pagado a float
+    try:
+        monto_pagado = float(monto_pagado)
+    except ValueError:
+        flash("Error: Ingresa un monto pagado válido.")
+        return redirect("/orden_venta")
+
+    # Calcular la diferencia entre el total y el pago del cliente
+    diferencia = monto_pagado - total_compra
+
+    # Obtener el saldo actual del cliente
+    cursor.execute("SELECT saldo FROM clientes_proveedores WHERE id=%s", (id_cliente,))
+    saldo_actual = cursor.fetchone()[0]
+
+    # Calcular el nuevo saldo sumando la diferencia
+    nuevo_saldo = saldo_actual + diferencia
+
+    # Actualizar el saldo del cliente en la base de datos
+    cursor.execute("UPDATE clientes_proveedores SET saldo=%s WHERE id=%s", (nuevo_saldo, id_cliente))
+    conn.commit()
+
+    # Insertar los datos en la tabla "detalles_compra"
+    sql = "INSERT INTO detalles_compra (productos, total, pago, diferencia_cliente, nombre_cliente) VALUES (%s, %s, %s, %s, %s);"
+    datos = (lista_productos, total_compra, monto_pagado, diferencia, nombre_cliente)
+    cursor.execute(sql, datos)
+    conn.commit()
+
+    # Restar el stock de los productos comprados
+    for item in lista_vta:
+        restar_stock(item['id'], item['cantidad'])
+
+      # Actualizar la salida de los productos en la base de datos
+    for item in lista_vta:
+        producto_id = item['id']
+        cantidad_vendida = item['cantidad']
+
+        # Obtener la salida actual del producto
+        cursor.execute("SELECT salida FROM productos WHERE id=%s", (producto_id,))
+        salida_actual = cursor.fetchone()[0]
+
+        # Calcular la nueva salida sumando la cantidad vendida
+        nueva_salida = salida_actual + cantidad_vendida
+
+        # Actualizar la salida del producto en la base de datos
+        cursor.execute("UPDATE productos SET salida=%s WHERE id=%s", (nueva_salida, producto_id))
+        conn.commit()
+
+    # Limpiar la lista de venta despues de procesar la compra
+    lista_vta.clear()
+
+    flash("Compra procesada exitosamente.")
+    return render_template("compra_venta/orden_venta.html")
 
 # Ruta para mostrar el ranking de productos con filtro por tipo
 @app.route("/ranking")
@@ -681,9 +800,28 @@ def add_to_cart_vta(id):
     conn.commit()
     return redirect("/venta")
 
-# Ruta para cancelar el venta
+# Actualizar lista de venta
+@app.route('/actualizar_cantidad_venta/<int:id>/<int:cantidad>', methods=['POST'])
+def actualizar_cantidad_venta(id, cantidad):
+    for item in lista_vta:
+        if item['id'] == id:
+            # Si está en la venta, aumenta la cantidad
+            item['cantidad'] = cantidad
+            print(item)
+            break
+    return
+@app.route("/actualizar_venta")
+def actualizar_venta():
+    return redirect("/orden_venta")
+
+# Ruta para cancelar la venta
 @app.route("/cancelar_venta")
 def cancelar_venta():
+    # Vaciar el pedido al hacer clic en "Cancelar Venta"
+    lista_vta.clear()
+    return redirect("/orden_venta")
+@app.route("/cancelar_venta_in")
+def cancelar_venta_in():
     # Vaciar el pedido al hacer clic en "Cancelar Venta"
     lista_vta.clear()
     return redirect("/venta")
@@ -694,6 +832,11 @@ def cancelar_pedido():
     # Vaciar el pedido al hacer clic en "Cancelar compra" // en el caso de comprar productos para el local
     pedido.clear()
     return redirect("/pedido")
+@app.route("/cancelar_pedido_in")
+def cancelar_pedido_in():
+    # Vaciar el pedido al hacer clic en "Cancelar compra" // en el caso de comprar productos para el local
+    pedido.clear()
+    return redirect("/productos")
 
 @app.route('/realizar_pago/<int:id>', methods=['GET'])
 def realizar_pago(id):
