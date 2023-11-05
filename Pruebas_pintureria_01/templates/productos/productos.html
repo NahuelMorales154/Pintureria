@@ -104,23 +104,23 @@
                             <td>{{ producto[6] }}</td>
                             <td>{{ producto[2] }}</td>
                             <td>{{ producto[3] }}</td>
-                            <td>
+                            <td style="text-align: center;">
                                 {% if producto[4] <= producto[7] %}
                                     <p style="color: #FFC107; font-weight: bold; margin: 0;">{{ producto[4] }}</p>
                                 {% else %}
                                     {{ producto[4] }}
                                 {% endif %}
                             </td>
-                            <td>${{ producto[5] }}</td>
+                            <td style="text-align: center;">${{ producto[5] }}</td>
                             <!-- Acciones -->
                             <td style="display: flex; justify-content: space-between;">
                                 <div>
                                     <!-- Boton para editar -->
-                                    <a class="btn btn-primary btn-sm" href="/edit/{{ producto[0] }}"><img src="../../static/images/ico/pen-solid.svg" alt="Editar" style="height: 20px;"></a>
+                                    <a class="btn btn-primary btn-sm" href="/edit/{{ producto[0] }}" title="Editar"><img src="../../static/images/ico/pen-solid.svg" alt="Editar" style="height: 20px;"></a>
                                     <!-- Boton para eliminar con confirmación -->
-                                    <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ producto[0] }}')"><img src="../../static/images/ico/trash-solid.svg" alt="Eliminar" style="height: 20px;"></a>
+                                    <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ producto[0] }}')" title="Eliminar"><img src="../../static/images/ico/trash-solid.svg" alt="Eliminar" style="height: 20px;"></a>
                                     <!-- Boton para agregar al pedido -->
-                                    <a class="btn btn-success btn-sm" href="/add_to_cart_ped/{{ producto[0] }}"><img src="../../static/images/ico/plus-solid.svg" alt="Agregar al Pedido" style="height: 20px;"></a>
+                                    <a class="btn btn-success btn-sm" href="/add_to_cart_ped/{{ producto[0] }}" title="Agregar al Pedido"><img src="../../static/images/ico/plus-solid.svg" alt="Agregar al Pedido" style="height: 20px;"></a>
                                 </div>
                                 <div>
                                     <!-- Verificar cantidad mínima con stock actual --> 

@@ -60,14 +60,14 @@
                             <td>{{ producto[6] }}</td>
                             <td>{{ producto[2] }}</td>
                             <td>{{ producto[3] }}</td>
-                            <td>
+                            <td style="text-align: center;">
                                 {% if producto[4] <= producto[7] %}
                                     <p style="color: #FFC107; font-weight: bold; margin: 0;">{{ producto[4] }}</p>
                                 {% else %}
                                     {{ producto[4] }}
                                 {% endif %}
                             </td>
-                            <td>${{ producto[5] }}</td>
+                            <td style="text-align: center;">${{ producto[5] }}</td>
                             <!-- Acciones -->
                             <td style="display: flex; justify-content: space-between;">
                                 <div>
@@ -133,9 +133,6 @@
                     </form>
                 </div>
             </div>
-            <!-- {% for item in lista_vta %}
-                <h6>{{ item }}</h6>
-            {% endfor %} -->
         </div>
     </div>
 </div>

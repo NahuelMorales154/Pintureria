@@ -8,13 +8,9 @@
     font-family: 'Open Sans', sans-serif;
 }
 
-* ::-webkit-scrollbar {
+/* * ::-webkit-scrollbar {
     display: none;
-}
-
-::-webkit-scrollbar {
-    display: none;
-}
+} */
 
 .contenedor_interno{
     height: 75vh;
@@ -188,4 +184,12 @@ a.selected{
     height: 85%;
     background-color: #1783db;
     border-radius: 30px;
+}
+
+.style_movimientos p{
+    margin: 0;
+    padding: 1px 0;
+    border-right: 1px solid black;
+    width: 100%;
+    
 }

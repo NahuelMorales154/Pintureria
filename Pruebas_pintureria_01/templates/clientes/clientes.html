@@ -32,11 +32,13 @@
                 <td style="color: {% if cliente[6] > 0 %}green{% elif cliente[6] < 0 %}red{% endif %}">${{ cliente[6] }}</td>
                 <td>
                     <!-- Botón para editar -->
-                    <a class="btn btn-primary btn-sm" href="/editar_cliente/{{ cliente[0] }}">Editar</a>
+                    <a class="btn btn-primary btn-sm" href="/editar_cliente/{{ cliente[0] }}" title="Editar"><img src="../../static/images/ico/pen-solid.svg" alt="Editar" style="height: 20px;"></a>
                     <!-- Botón para eliminar con confirmación -->
-                    <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ cliente[0] }}')">Eliminar</a>
+                    <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ cliente[0] }}')" title="Eliminar"><img src="../../static/images/ico/trash-solid.svg" alt="Eliminar" style="height: 20px;"></a>
                     <!-- Botón para realizar pago -->
-                    <a class="btn btn-success btn-sm" href="/realizar_pago/{{ cliente[0] }}">Realizar Pago</a>
+                    <a class="btn btn-success btn-sm" href="/realizar_pago/{{ cliente[0] }}" title="Realizar Pago"><img src="../../static/images/ico/money-bill-wave-solid.svg" alt="Realizar Pago" style="height: 20px;"></a>
+                    <!-- Botón para ver información -->
+                    <a class="btn btn-success btn-sm" href="/ver_info_cliente/{{ cliente[0] }}" title="Ver"><img src="../../static/images/ico/eye-solid.svg" alt="Ver" style="height: 20px;"></a>
                 </td>
             </tr>
             {% endif %}

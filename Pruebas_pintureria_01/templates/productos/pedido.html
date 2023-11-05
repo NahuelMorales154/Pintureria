@@ -10,8 +10,8 @@
             <form method="post" action="/procesar_compra" onsubmit="return confirm('¿Estás seguro de procesar la compra?');">
                 <!-- Campo para seleccionar el cliente / proveedor -->
                 <div class="form-group">
-                    <label for="nombre_proveedor">Selecciona un Proveedor:</label>
-                    <select class="form-control" id="nombre_proveedor" name="nombre_proveedor">
+                    <label for="id_proveedor">Selecciona un Proveedor:</label>
+                    <select class="form-control" id="id_proveedor" name="id_proveedor">
                         {% for proveedor in proveedor_data %}
                             <option value="{{ proveedor[0] }}">{{ proveedor[1] }}</option>
                         {% endfor %}
@@ -27,8 +27,8 @@
 
                 <!-- Campo para ingresar el pago al cliente / proveedor -->
                 <div class="form-group">
-                    <label for="pago_cliente">Pago:</label>
-                    <input type="number" class="form-control" id="pago_cliente" name="pago_cliente" required>
+                    <label for="pago_a_proveedor">Pago:</label>
+                    <input type="number" class="form-control" id="pago_a_proveedor" name="pago_a_proveedor" required>
                 </div>
 
                 <!-- Mostrar el total de la compra -->
