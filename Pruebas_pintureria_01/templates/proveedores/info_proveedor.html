@@ -49,13 +49,13 @@
                 <div style="display: grid; grid-template-columns: repeat(2,1fr);">
                     <p style="border: none; margin: 0;">Diferencia:</p>
                     <div style="display: grid; grid-template-columns: repeat(3,1fr);">
-                        {% if diferencia_cliente is not none %}
-                            {% if diferencia_cliente < 0 %}
-                                <p style="margin: 0; text-align: center; grid-column: 3; border-top: 1px solid #000000; color: red; margin: 0;">${{ diferencia_cliente }}</p>
-                            {% elif diferencia_cliente == 0 %}
-                                <p style="margin: 0; text-align: center; grid-column: 3; border-top: 1px solid #000000; margin: 0;">${{ diferencia_cliente }}</p>
+                        {% if pago is not none and total is not none %}
+                            {% if pago - total < 0 %}
+                                <p style="margin: 0; text-align: center; grid-column: 3; border-top: 1px solid #000000; color: red; margin: 0;">${{ pago - total  }}</p>
+                            {% elif pago - total == 0 %}
+                                <p style="margin: 0; text-align: center; grid-column: 3; border-top: 1px solid #000000; margin: 0;">${{ pago - total }}</p>
                             {% else %}
-                                <p style="margin: 0; text-align: center; grid-column: 3; border-top: 1px solid #000000; color: green; margin: 0;">${{ diferencia_cliente }}</p>
+                                <p style="margin: 0; text-align: center; grid-column: 3; border-top: 1px solid #000000; color: green; margin: 0;">${{ pago - total  }}</p>
                             {% endif %}
                         {% endif %}
                     </div>

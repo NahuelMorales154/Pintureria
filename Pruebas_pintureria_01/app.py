@@ -212,9 +212,18 @@ def actualizar_cantidad_pedido(id, cantidad):
         if item['id'] == id:
             # Si está en el pedido, aumenta la cantidad
             item['cantidad'] = cantidad
-            print(item)
             break
     return
+
+@app.route('/actualizar_precio_pedido/<int:id>/<int:precio>', methods=['POST'])
+def actualizar_precio_pedido(id, precio):
+    for item in pedido:
+        if item['id'] == id:
+            # Si está en el pedido, aumenta la cantidad
+            item['precio'] = precio
+            break
+    return
+
 @app.route("/actualizar_pedido")
 def actualizar_pedido():
     return redirect("/pedido") 
@@ -841,7 +850,6 @@ def actualizar_cantidad_venta(id, cantidad):
         if item['id'] == id:
             # Si está en la venta, aumenta la cantidad
             item['cantidad'] = cantidad
-            print(item)
             break
     return
 @app.route("/actualizar_venta")
@@ -980,21 +988,17 @@ def ver_info_cliente(id):
     movimientos = lista_temp
 
     # conseguir la suma del total
-    cursor.execute("SELECT SUM(total) FROM detalles_compra WHERE id_cliente=%s", (id,))
+    cursor.execute("SELECT SUM(total) FROM detalles_compra WHERE id_cliente=%s AND total >= 0", (id,))
     total = cursor.fetchone()[0]
 
     # conseguir la suma del total
     cursor.execute("SELECT SUM(pago) FROM detalles_compra WHERE id_cliente=%s", (id,))
     pago = cursor.fetchone()[0]
 
-    # conseguir la suma del total
-    cursor.execute("SELECT SUM(diferencia_cliente) FROM detalles_compra WHERE id_cliente=%s", (id,))
-    diferencia_cliente = cursor.fetchone()[0]
-
     conn.commit()
     conn.close()
 
-    return render_template("clientes/info_cliente.html", cliente=cliente, movimientos=movimientos, total=total, pago=pago, diferencia_cliente=diferencia_cliente)
+    return render_template("clientes/info_cliente.html", cliente=cliente, movimientos=movimientos, total=total, pago=pago)
 
 #Info Proveedores
 @app.route('/ver_info_proveedores/<int:id>', methods=['GET'])
@@ -1043,21 +1047,17 @@ def ver_info_proveedores(id):
     movimientos = lista_temp
 
     # conseguir la suma del total
-    cursor.execute("SELECT SUM(total) FROM detalles_compra WHERE id_cliente=%s", (id,))
+    cursor.execute("SELECT SUM(total) FROM detalles_compra WHERE id_cliente=%s AND total >= 0", (id,))
     total = cursor.fetchone()[0]
 
     # conseguir la suma del total
     cursor.execute("SELECT SUM(pago) FROM detalles_compra WHERE id_cliente=%s", (id,))
     pago = cursor.fetchone()[0]
 
-    # conseguir la suma del total
-    cursor.execute("SELECT SUM(diferencia_cliente) FROM detalles_compra WHERE id_cliente=%s", (id,))
-    diferencia_cliente = cursor.fetchone()[0]
-
     conn.commit()
     conn.close()
 
-    return render_template("proveedores/info_proveedor.html", proveedor=proveedor, movimientos=movimientos, total=total, pago=pago, diferencia_cliente=diferencia_cliente)
+    return render_template("proveedores/info_proveedor.html", proveedor=proveedor, movimientos=movimientos, total=total, pago=pago)
 
 # Iniciar la aplicacion Flask
 if __name__ == "__main__":

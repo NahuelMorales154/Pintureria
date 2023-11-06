@@ -54,7 +54,11 @@
             <div style="padding: 3% 5%; background-color: beige;">
                 <!-- Lista de productos en el pedido -->
                 <div style="display: grid; grid-template-columns: repeat(3,1fr);">
-                    <h5>Productos:</h5><h5 style="text-align: center;">Cant:</h5><h5 style="text-align: center;">Precio:</h5>
+                    <h5>Productos:</h5>
+                    <h5 style="text-align: center;">Cant:</h5>
+                    <div style="display: flex; justify-content: space-between;">
+                        <h5 style="text-align: center;">Costo:</h5><h5 style="text-align: center;">Total:</h5>
+                    </div>
                     {% for item in pedido %}
                         <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
                         <div style="grid-column: 1/-1; display: grid; grid-template-columns: repeat(3,1fr); margin: 2px 0;">
@@ -64,11 +68,11 @@
                             <div style="text-align: center;">
                                 <input type="hidden" name="productos[]" value="{{ item['id'] }}">
                                 <input type="number" class="cantidad" name="cantidades[]" value="{{ item['cantidad'] }}" style="width: 50%; text-align: center;">
-                                <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
                             </div>
                             <div style="display: flex; justify-content: space-between;">
                                 <div>
-                                    <h6>${{ item['precio'] }}</h6>
+                                    <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                                    <input type="number" class="precio" name="precios[]" value="{{ item['precio'] }}" style="width: 80%; text-align: center;">
                                 </div>
                                 <div>
                                     <h6>${{ item['precio'] * item['cantidad'] }}</h6>
@@ -97,7 +101,35 @@
             url: `/actualizar_cantidad_pedido/${id}/${cantidad}`
         });
     });
+
+    $(".precio").on("input", function() {
+      var precio = $(this).val();
+      var id = $(this).siblings("input[name='productos[]']").val();
+      
+      // Envia los datos al servidor utilizando AJAX
+        $.ajax({
+            type: "POST",
+            url: `/actualizar_precio_pedido/${id}/${precio}`
+        });
+    });
   });
-</script> 
+</script>
+
+<!-- Script de Actualizacion de precios -->
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $(".precio").on("input", function() {
+      var precio = $(this).val();
+      var id = $(this).siblings("input[name='productos[]']").val();
+      
+      // Envia los datos al servidor utilizando AJAX
+        $.ajax({
+            type: "POST",
+            url: `/actualizar_precio_pedido/${id}/${precio}`
+        });
+    });
+  });
+</script>  -->
 
 {% endblock %}
