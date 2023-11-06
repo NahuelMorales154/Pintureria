@@ -6,9 +6,14 @@
         <p>Saldo actual: ${{ cliente[2] }}</p>
 
         <form action="/procesar_pago/{{ cliente[0] }}" method="post">
-            <label for="monto">Monto del Pago:</label>
-            <input type="number" name="monto" step="0.01" required>
-            <button type="submit">Realizar Pago</button>
+            <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 10px;">
+                <div class="input-group" style="width: 100%; gap: 10px;">
+                    <label for="monto">Monto del Pago:</label>
+                    <input type="number" name="monto" step="0.01" required class="form-control" style="height: 40px;">                
+                </div>
+                <button type="submit" class="btn btn-success mb-3" style="width: 50%;">Realizar Pago</button>
+            </div>
+
         </form>
     </div>
 

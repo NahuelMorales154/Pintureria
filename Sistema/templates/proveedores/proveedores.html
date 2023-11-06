@@ -3,13 +3,16 @@
 
 <div class="container">
     <h2>Proveedores</h2>
-    <form class="mb-3" action="/proveedores" method="GET">
-        <div class="input-group" style="width: 50%; gap: 10px;">
-            <input type="text" class="form-control" placeholder="Buscar por nombre o DNI" name="search">
-            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
-        </div>
-    </form>
-    <a href="/nuevo_proveedor" class="btn btn-success mb-3">Agregar Proveedor Nuevo</a>
+    <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+        <form class="mb-3" action="/proveedores" method="GET">
+            <div class="input-group" style="width: 100%; gap: 10px;">
+                <input type="text" class="form-control" placeholder="Buscar por nombre o DNI" name="search">
+                <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+            </div>
+        </form>
+        <a href="/nuevo_proveedor" class="btn btn-success mb-3" style="width: 50%; margin-left: auto;">Agregar Proveedor Nuevo</a>
+    </div>
+
     <table class="table table-striped">
         <thead>
             <tr>
