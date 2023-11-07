@@ -67,7 +67,10 @@
             {% for item in movimientos %}
                 <div class="style_movimientos" style="margin: 10px 5px; padding: 10px; background-color: #F2F2F2; border-radius: 10px;">
                     <div style="display: grid; grid-template-columns: repeat(2,1fr);">
-                        <p>#{{ item[0][0] }}</p>
+                        <div style="display: flex; justify-content: space-between;">
+                            <p style="border: none;">#{{ item[0][0] }}</p>
+                            <p style="text-align: center;">{{ item[0][5] }}</p>    
+                        </div>
                         <div style="display: grid; grid-template-columns: repeat(3,1fr);">
                             {% if item[0][4] == 3 %}
                                 <p style="text-align: center; border-top: 1px solid #000000; grid-column: 1/-2;">Pago de deuda</p>

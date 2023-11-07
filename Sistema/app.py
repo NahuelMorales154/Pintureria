@@ -573,6 +573,9 @@ def procesar_compra():
     # Calcular el nuevo saldo sumando la diferencia
     nuevo_saldo = saldo_actual + diferencia
 
+    # Obtener la fecha y hora de la transaccion
+    fecha_hora = request.form.get('fecha_hora')
+
     # Tipo de movimiento 1 (compra)
     tipo = 1
 
@@ -581,8 +584,8 @@ def procesar_compra():
     conn.commit()
 
     # Insertar los datos en la tabla "detalles_compra"
-    sql = "INSERT INTO detalles_compra (productos, total, pago, diferencia_cliente, id_cliente, tipo) VALUES (%s, %s, %s, %s, %s, %s);"
-    datos = (lista_productos, total_compra, monto_pagado, diferencia, id_proveedor, tipo)
+    sql = "INSERT INTO detalles_compra (productos, total, pago, diferencia_cliente, id_cliente, tipo, fecha) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+    datos = (lista_productos, total_compra, monto_pagado, diferencia, id_proveedor, tipo, fecha_hora)
     cursor.execute(sql, datos)
     conn.commit()
 
@@ -686,6 +689,9 @@ def procesar_venta():
     # Calcular el nuevo saldo sumando la diferencia
     nuevo_saldo = saldo_actual + diferencia
 
+    # Obtener la fecha y hora de la transaccion
+    fecha_hora = request.form.get('fecha_hora')
+
     # Tipo de movimiento 2 (venta)
     tipo = 2
 
@@ -694,8 +700,8 @@ def procesar_venta():
     conn.commit()
 
     # Insertar los datos en la tabla "detalles_compra"
-    sql = "INSERT INTO detalles_compra (productos, total, pago, diferencia_cliente, id_cliente, tipo) VALUES (%s, %s, %s, %s, %s, %s);"
-    datos = (lista_productos, total_venta, monto_pagado, diferencia, id_cliente, tipo)
+    sql = "INSERT INTO detalles_compra (productos, total, pago, diferencia_cliente, id_cliente, tipo, fecha) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+    datos = (lista_productos, total_venta, monto_pagado, diferencia, id_cliente, tipo, fecha_hora)
     cursor.execute(sql, datos)
     conn.commit()
 
@@ -754,6 +760,37 @@ def ranking():
     mas_vendido_total = suma
 
     conn.commit()
+
+    # Totales vendidos
+    cursor.execute("SELECT total, pago, tipo FROM detalles_compra;")
+    totales = cursor.fetchall()
+
+
+    egreso_d = 0
+    ingreso_d = 0
+    total_deuda_af = 0
+    total_deuda_ec = 0
+    # 1(compra), 2 (venta), 3(pago de deuda)
+    for i in totales:
+        if i[2] == 1:
+            egreso_d = egreso_d + i[1]
+            total_deuda_ec = total_deuda_ec + i[0]
+            #Aun no contempla pago deuda
+        elif i[2] == 2:
+            ingreso_d = ingreso_d + i[1]
+            total_deuda_af = total_deuda_af + i[0]
+            #Aun no contempla pago deuda
+        elif i[2] == 3:
+            #validar si es a cliente o proveedor // pago deuda
+            continue
+    #compra
+    print(f"Compra: total de deuda: {total_deuda_ec}")
+    print(f"Compra: total de pago: {egreso_d}")
+    print(f"resultado: {total_deuda_ec - egreso_d}")
+    #venta
+    print(f"Compra: total de deuda: {total_deuda_af}")
+    print(f"Compra: total de pago: {ingreso_d}")
+    print(f"resultado: {total_deuda_af - ingreso_d}")
 
     # Consulta adicional para obtener los tipos disponibles
     cursor.execute("SELECT DISTINCT tipo FROM productos;")
@@ -952,7 +989,7 @@ def ver_info_cliente(id):
     cliente = cursor.fetchone()
 
     # conseguir info de los movimientos del cliente a partir del ID
-    cursor.execute("SELECT id, total, pago, diferencia_cliente, tipo  FROM detalles_compra WHERE id_cliente=%s", (id,))
+    cursor.execute("SELECT id, total, pago, diferencia_cliente, tipo, fecha  FROM detalles_compra WHERE id_cliente=%s", (id,))
     movimiento = cursor.fetchall()
 
     movimiento_list = list(movimiento)
@@ -966,6 +1003,15 @@ def ver_info_cliente(id):
     for i in movimiento:
         formateo = f'{i[0]:07}'
         i[0] = formateo
+
+        # Dividir la cadena en partes
+        partes = f'{i[5]}'.split(' ')
+
+        # Dividir la parte de la fecha en año, mes y día
+        anio, mes, dia = partes[0].split('-')
+
+        # Formatear la nueva cadena
+        i[5] = f"{dia}/{mes}/{anio} {partes[1]}"
 
     # conseguir info de las compras del cliente a partir del ID
     cursor.execute("SELECT productos FROM detalles_compra WHERE id_cliente=%s", (id,))
@@ -1011,7 +1057,7 @@ def ver_info_proveedores(id):
     proveedor = cursor.fetchone()
 
     # conseguir info de los movimientos del proveedor a partir del ID
-    cursor.execute("SELECT id, total, pago, diferencia_cliente, tipo  FROM detalles_compra WHERE id_cliente=%s", (id,))
+    cursor.execute("SELECT id, total, pago, diferencia_cliente, tipo, fecha  FROM detalles_compra WHERE id_cliente=%s", (id,))
     movimiento = cursor.fetchall()
 
     movimiento_list = list(movimiento)
@@ -1025,6 +1071,15 @@ def ver_info_proveedores(id):
     for i in movimiento:
         formateo = f'{i[0]:07}'
         i[0] = formateo
+
+        # Dividir la cadena en partes
+        partes = f'{i[5]}'.split(' ')
+
+        # Dividir la parte de la fecha en año, mes y día
+        anio, mes, dia = partes[0].split('-')
+
+        # Formatear la nueva cadena
+        i[5] = f"{dia}/{mes}/{anio} {partes[1]}"
 
     # conseguir info de las compras al proveedor a partir del ID
     cursor.execute("SELECT productos FROM detalles_compra WHERE id_cliente=%s", (id,))

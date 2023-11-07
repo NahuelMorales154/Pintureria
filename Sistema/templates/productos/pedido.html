@@ -29,6 +29,28 @@
                 <div class="form-group">
                     <label for="pago_a_proveedor">Pago:</label>
                     <input type="number" class="form-control" id="pago_a_proveedor" name="pago_a_proveedor" required>
+                
+                    <input type="hidden" id="fecha_hora" name="fecha_hora" readonly>
+                    <script>
+                        window.addEventListener('DOMContentLoaded', function () {
+                            // Obtener el campo de fecha y hora por su ID
+                            var campoFechaHora = document.getElementById('fecha_hora');
+                
+                            // Crear un objeto Date para obtener la fecha y hora actual
+                            var fechaActual = new Date();
+                
+                            // Formatear la fecha y hora actual como una cadena con formato personalizado
+                            var fechaActualFormateada = fechaActual.getFullYear() + '-' + 
+                                                       (fechaActual.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                                                       fechaActual.getDate().toString().padStart(2, '0') + ' ' +
+                                                       fechaActual.getHours().toString().padStart(2, '0') + ':' +
+                                                       fechaActual.getMinutes().toString().padStart(2, '0') + ':' +
+                                                       fechaActual.getSeconds().toString().padStart(2, '0');
+                
+                            // Asignar la fecha y hora actual al campo de fecha y hora
+                            campoFechaHora.value = fechaActualFormateada;
+                        });
+                    </script>
                 </div>
 
                 <!-- Mostrar el total de la compra -->
