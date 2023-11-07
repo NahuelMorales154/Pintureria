@@ -1,15 +1,15 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<div class="container mt-4 contenedor_interno">
+<div class="container mt-4 contenedor_interno" style="height: max-content;">
     <h2 class="mb-3">Formulario de edición</h2>
 
     <form method="post" action="/update" enctype="multipart/form-data" class="card">
         <div class="card-header">
             Editar producto
         </div>
-        <div class="card-body" style="display: grid; grid-template-columns: repeat(2,1fr); column-gap: 10px;">
-            <h5 class="card-title" style="grid-column: 1/-1;">Datos del producto</h5>
+        <div class="card-body" style="display: grid; grid-template-columns: repeat(2,1fr); gap: 10px;">
+            <!-- <h5 class="card-title" style="grid-column: 1/-1;">Datos del producto</h5> -->
 
             <div class="form-group">
                 <label for="txtNombre">Nombre</label>
@@ -47,8 +47,8 @@
             </div>
 
             <div class="form-group">
-                <label for="txtSalida">Cantidad de Salida</label>
-                <input id="txtSalida" value="{{ producto[8] }}" class="form-control" type="number" name="txtSalida">
+                <!-- <label for="txtSalida">Cantidad de Salida</label> -->
+                <input id="txtSalida" value="{{ producto[8] }}" class="form-control" type="hidden" name="txtSalida">
             </div>
 
             <input type="hidden" value="{{ producto[0] }}" name="txtID" id="txtID">

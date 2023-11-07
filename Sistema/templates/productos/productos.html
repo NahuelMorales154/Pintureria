@@ -57,17 +57,17 @@
 
         <div class="form-inline descuento-form">
             <!-- Formulario para aplicar ajuste de precios -->
-            <form action="{{ url_for('apply_discount') }}" method="post" style="display: flex; gap: 0.5rem;">
-                <label for="discountPercentage">Cambio de precios:</label>
+            <form action="{{ url_for('apply_discount') }}" method="post" style="display: flex; gap: 0.5rem; padding: 5px; background-color: #F2F2F2;">
+                <!-- <label for="discountPercentage">Cambio de precios:</label> -->
                 <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="-100" max="100" step="0.01" required>
 
                 <!-- Agregar filtro por tipo -->
-                <!-- <select class="form-control" name="tipoFiltro">
-                    <option value="">Filtrar por tipo</option>
+                <select class="form-control" name="tipoFiltro">
+                    <option value="">General</option>
                     {% for tipo in tipos %}
                         <option value="{{ tipo }}">{{ tipo }}</option>
                     {% endfor %}
-                </select> -->
+                </select>
 
                 <!-- Boton para aplicar ajuste con confirmación -->
                 <button type="button" class="btn btn-warning" onclick="confirmApply()">Aplicar</button>

@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="container">
-        <h2>Realizar Pago para {{ cliente[1] }}</h2>
+        <h2>Saldo de deuda: {{ cliente[1] }}</h2>
         <p>Saldo actual: ${{ cliente[2] }}</p>
 
         <form action="/procesar_pago/{{ cliente[0] }}" method="post">

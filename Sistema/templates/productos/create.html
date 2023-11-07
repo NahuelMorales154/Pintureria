@@ -23,57 +23,57 @@
             <div class="card-header">
                 Ingresar producto
             </div>
-            <div class="card-body">
-                <h5 class="card-title">Datos del producto</h5>
+            <div class="card-body" style="display: grid; grid-template-columns: repeat(2,1fr); gap: 10px;">
+                <!-- <h5 class="card-title" style="grid-column: 1/-1;">Datos del producto</h5> -->
                 <!-- Campo para ingresar el nombre del producto -->
-                <div class="form-group">
+                <div class="form-group" style="margin: 0;">
                     <label for="txtNombre">Nombre</label>
                     <input id="txtNombre" class="form-control" type="text" name="txtNombre">
                 </div>
 
                 <!-- Campo para ingresar la marca del producto -->
-                <div class="form-group">
+                <div class="form-group" style="margin: 0;">
                     <label for="txtMarca">Marca</label>
                     <input id="txtMarca" class="form-control" type="text" name="txtMarca">
                 </div>
 
                 <!-- Campo para ingresar el tipo del producto -->
-                <div class="form-group">
+                <div class="form-group" style="margin: 0;">
                     <label for="txtTipo">Tipo</label>
                     <input id="txtTipo" class="form-control" type="text" name="txtTipo">
                 </div>
 
                 <!-- Campo para ingresar la descripción del producto -->
-                <div class="form-group">
+                <div class="form-group" style="margin: 0;">
                     <label for="txtDescripcion">Descripción</label>
                     <input id="txtDescripcion" class="form-control" type="text" name="txtDescripcion">
                 </div>
 
                 <!-- Campo para ingresar la cantidad del producto -->
-                <div class="form-group">
+                <div class="form-group" style="margin: 0;">
                     <label for="txtCantidad">Cantidad</label>
-                    <input id="txtCantidad" class="form-control" type="number" name="txtCantidad">
+                    <input id="txtCantidad" class="form-control" type="number" name="txtCantidad" value=0>
                 </div>
 
                 <!-- Campo para ingresar el precio del producto -->
-                <div class="form-group">
+                <div class="form-group" style="margin: 0;">
                     <label for="txtPrecio">Precio</label>
                     <input id="txtPrecio" class="form-control" type="number" name="txtPrecio">
                 </div>
 
                 <!-- Campo para ingresar el minimo del producto -->
-                <div class="form-group">
+                <div class="form-group" style="margin: 0;">
                     <label for="txtMinimo">Mínimo</label>
                     <input id="txtMinimo" class="form-control" type="number" name="txtMinimo">
                 </div>
 
                 <!-- Campo para ingresar la salida del producto -->
-                <div class="form-group">
+                <div class="form-group" style="margin: 0;">
                     <input type="hidden" id="txtSalida" class="form-control" type="number" name="txtSalida" value=0>
                 </div>
 
                 <!-- Botones para agregar o regresar -->
-                <div class="form-group">
+                <div class="form-group" style="margin: 10px 0 0 0;">
                     <!-- Boton para agregar el producto -->
                     <input type="submit" class="btn btn-success" value="Agregar">
                     <!-- Boton para regresar a la pagina principal -->
