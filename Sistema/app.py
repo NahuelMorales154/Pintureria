@@ -143,7 +143,6 @@ def apply_discount():
         try:
             discount_percentage = float(discount_percentage_raw)
         except ValueError:
-            flash(f"Error: El descuento/aumento '{discount_percentage_raw}' no es un número válido.")
             return redirect("/productos")
 
         product_type = request.form.get('tipoFiltro')
@@ -166,10 +165,9 @@ def apply_discount():
             cursor.execute("UPDATE productos SET precio=%s WHERE id=%s;", (new_price, producto[0]))
 
         conn.commit()
-        flash("Descuento/aumento aplicado exitosamente.")
+        print("Descuento/aumento aplicado exitosamente.")
     except Exception as e:
         print(f"Error al aplicar descuento/aumento: {str(e)}")
-        flash(f"Error al aplicar descuento/aumento: {str(e)}")
     finally:
         if 'cursor' in locals():
             cursor.close()
@@ -282,7 +280,7 @@ def agregar_cliente():
     # Validacion de datos
 
     if not _nombre or not _dni or not _numero or not _direccion:
-        flash("Todos los campos son obligatorios. Por favor, completa todos los campos.")
+
         return redirect("/nuevo_cliente")
 
     conn = mysql.connect()
@@ -295,7 +293,7 @@ def agregar_cliente():
     cursor.execute(sql, datos)
     conn.commit()
 
-    flash("Cliente agregado exitosamente.")
+
     return redirect("/clientes")
 
 # Ruta para eliminar un cliente
@@ -337,7 +335,7 @@ def actualizar_cliente(id):
     # Validacion de datos
 
     if not _nombre or not _dni or not _numero or not _direccion or not _cuit or not _saldo:
-        flash("Todos los campos son obligatorios. Por favor, completa todos los campos.")
+
         return redirect(f"/editar_cliente/{id}")
 
     conn = mysql.connect()
@@ -350,7 +348,6 @@ def actualizar_cliente(id):
     cursor.execute(sql, datos)
     conn.commit()
 
-    flash("Cliente actualizado exitosamente.")
     return redirect("/clientes")
 
 ################################################################
@@ -392,7 +389,7 @@ def agregar_proveedor():
     # Validacion de datos
 
     if not _nombre or not _cuit or not _numero or not _direccion:
-        flash("Todos los campos son obligatorios. Por favor, completa todos los campos.")
+
         return redirect("/nuevo_proveedor")
 
     conn = mysql.connect()
@@ -405,7 +402,6 @@ def agregar_proveedor():
     cursor.execute(sql, datos)
     conn.commit()
 
-    flash("Proveedor agregado exitosamente.")
     return redirect("/proveedores")
 
 # Ruta para eliminar un proveedor
@@ -447,7 +443,7 @@ def actualizar_proveedor(id):
     # Validacion de datos
 
     if not _nombre or not _dni or not _numero or not _direccion or not _cuit or not _saldo:
-        flash("Todos los campos son obligatorios. Por favor, completa todos los campos.")
+
         return redirect(f"/editar_proveedor/{id}")
 
     conn = mysql.connect()
@@ -460,7 +456,6 @@ def actualizar_proveedor(id):
     cursor.execute(sql, datos)
     conn.commit()
 
-    flash("proveedor actualizado exitosamente.")
     return redirect("/proveedores")
 ################################################################
 
@@ -531,7 +526,7 @@ def procesar_compra():
     
     # Verificar si id_proveedor es None y manejarlo
     if id_proveedor is None:
-        flash("Error: Selecciona un cliente.")
+
         return redirect("/pedido")
 
     conn = mysql.connect()
@@ -553,14 +548,14 @@ def procesar_compra():
 
     # Verificar si monto_pagado es None y manejarlo
     if monto_pagado is None:
-        flash("Error: Ingresa el pago.")
+    
         return redirect("/pedido")
 
     # Convertir monto_pagado a float
     try:
         monto_pagado = float(monto_pagado)
     except ValueError:
-        flash("Error: Ingresa un monto pagado válido.")
+
         return redirect("/pedido")
 
     # Calcular la diferencia entre el total y el pago del cliente
@@ -612,7 +607,6 @@ def procesar_compra():
     # Limpiar el pedido despues de procesar la compra
     pedido.clear()
 
-    flash("Compra procesada exitosamente.")
     return render_template("productos/pedido.html", current_page=current_page)
 
 # Ruta para mostrar la pagina de la venta
@@ -647,7 +641,6 @@ def procesar_venta():
     
     # Verificar si id_cliente es None y manejarlo
     if id_cliente is None:
-        flash("Error: Selecciona un cliente.")
         return redirect("/orden_venta")
 
     conn = mysql.connect()
@@ -669,14 +662,12 @@ def procesar_venta():
 
     # Verificar si monto_pagado es None y manejarlo
     if monto_pagado is None:
-        flash("Error: Ingresa el monto pagado por el cliente.")
         return redirect("/orden_venta")
 
     # Convertir monto_pagado a float
     try:
         monto_pagado = float(monto_pagado)
     except ValueError:
-        flash("Error: Ingresa un monto pagado válido.")
         return redirect("/orden_venta")
 
     # Calcular la diferencia entre el total y el pago del cliente
@@ -728,7 +719,6 @@ def procesar_venta():
     # Limpiar la lista de venta despues de procesar la compra
     lista_vta.clear()
 
-    flash("Compra procesada exitosamente.")
     return render_template("compra_venta/orden_venta.html")
 
 # Ruta para mostrar el ranking de productos con filtro por tipo
@@ -757,8 +747,7 @@ def ranking():
         suma = suma + i[8]
 
     mas_vendido = heapq.nlargest(5, lista_temp)
-    mas_vendido_total = suma
-
+    mas_vendido_total = suma if suma != 0 else 1
     conn.commit()
 
     # Totales vendidos
