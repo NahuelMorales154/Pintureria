@@ -116,19 +116,19 @@
                     </div>
                 </div>
                 <div style="margin-top: 10px;">
-                    <!-- Formulario para procesar la venta -->
-                    <form method="post" action="/procesar_venta">
-                        <!-- Campos ocultos para cada producto en la venta -->
+                <!-- Formulario para procesar la venta -->
+                    <form method="post" action="/procesar_venta" id="procesarVentaForm">
+                    <!-- Campos ocultos para cada producto en la venta -->
                         {% for item in lista_vta %}
-                            <input type="hidden" name="productos[]" value="{{ item['id'] }}">
-                            <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
-                            <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
+                        <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                        <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
+                        <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
                         {% endfor %}
                         <div style="text-align: center;">
-                            <!-- Botón para procesar la compra -->
-                            <button type="submit" class="btn btn-success">Procesar Venta</button>
-                            <!-- Botón para cancelar el venta -->
-                            <a href="/cancelar_venta_in" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar la venta?');">Cancelar Venta</a>
+                        <!-- Botón para procesar la compra sin confirmación -->
+                        <button type="submit" class="btn btn-success">Procesar Venta</button>
+                        <!-- Botón para cancelar la venta con SweetAlert2 -->
+                        <a href="#" class="btn btn-danger" onclick="confirmarCancelarVenta()">Cancelar Venta</a>
                         </div>
                     </form>
                 </div>
@@ -137,44 +137,40 @@
     </div>
 </div>
 
-<!-- Script de Actualizacion de cantidades -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  $(document).ready(function() {
-    $(".cantidad").on("input", function() {
-      var cantidad = $(this).val();
-      var id = $(this).siblings("input[name='productos[]']").val();
-      
-      // Envia los datos al servidor utilizando AJAX
-        $.ajax({
-            type: "POST",
-            url: `/actualizar_cantidad_venta/${id}/${cantidad}`
-        });
-    });
-  });
-</script>
-
-<!-- Script de SweetAlert2 para confirmar eliminación -->
+<!-- Script de SweetAlert2 para confirmar procesar venta y cancelar venta -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function confirmDelete(productID) {
-    // Mostrar un cuadro de confirmación
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Esta acción no se puede deshacer',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Redirigir a la pagina de eliminación con el ID del producto
-            window.location.href = "/destroy/" + productID;
-        }
-    });
-}
+    function confirmarProcesarVenta() {
+        Swal.fire({
+            title: '¿Estás seguro de procesar la venta?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, procesar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                document.getElementById('procesarVentaForm').submit();
+            }
+        });
+    }
+
+    function confirmarCancelarVenta() {
+        Swal.fire({
+            title: '¿Estás seguro de cancelar la venta?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, redirigir o ejecutar la acción de cancelar
+                window.location.href = "/cancelar_venta_in";
+            }
+        });
+    }
 </script>
 
 {% endblock %}

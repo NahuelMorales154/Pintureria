@@ -7,7 +7,7 @@
     <div style="display: grid; grid-template-columns: repeat(2,1fr);">
         <div>
             <!-- Formulario para procesar la compra /venta -->
-            <form method="post" action="/procesar_compra" onsubmit="return confirm('¿Estás seguro de procesar la compra?');">
+            <form id="procesarCompraForm" method="post" action="/procesar_compra" onsubmit="return confirmarProcesarCompra();">
                 <!-- Campo para seleccionar el cliente / proveedor -->
                 <div class="form-group">
                     <label for="id_proveedor">Selecciona un Proveedor:</label>
@@ -61,9 +61,8 @@
                         <!-- Boton para procesar la compra -->
                         <button type="submit" class="btn btn-success">Procesar Compra</button>
 
-                        <!-- Boton para cancelar la venta con confirmación -->
-                        <a href="/cancelar_pedido" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar el pedido?');">Cancelar Compra</a>
-                    </div>
+                        <!-- Boton para cancelar la venta con SweetAlert2 -->
+                        <a href="/cancelar_pedido" class="btn btn-danger" onclick="return confirmarCancelarCompra();">Cancelar Compra</a>                    </div>
                     <div>
                         <!-- Boton para volver a la lista de productos -->
                         <a href="/productos" class="btn btn-success" style="padding: 2px;"><img src="../../static/images/ico/table-list-solid.svg" style="height: 2rem;"></a>
@@ -153,5 +152,46 @@
     });
   });
 </script>  -->
+
+<!-- Script de SweetAlert2 para confirmar procesar venta y cancelar venta -->
+<!-- Script de SweetAlert2 para confirmar procesar venta y cancelar venta -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmarProcesarCompra() {
+        Swal.fire({
+            title: '¿Estás seguro de procesar la compra?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, procesar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                document.getElementById('procesarCompraForm').submit();
+            }
+        });
+        
+        return false; // Evitar que el formulario se envíe directamente
+    }
+
+    function confirmarCancelarCompra() {
+        Swal.fire({
+            title: '¿Estás seguro de cancelar la venta?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No, mantener'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, redirigir a la página de cancelación
+                window.location.href = '/cancelar_pedido';
+            }
+        });
+
+        return false; // Evitar que el enlace se siga directamente
+    }
+</script>
 
 {% endblock %}

@@ -7,7 +7,7 @@
     <div style="display: grid; grid-template-columns: repeat(2,1fr);">
         <div>
             <!-- Formulario para procesar la compra /venta -->
-            <form method="post" action="/procesar_venta" onsubmit="return confirm('¿Estás seguro de procesar la compra?');">
+            <form method="post" action="/procesar_venta" id="procesarVentaForm">
                 <!-- Campo para seleccionar el cliente / proveedor -->
                 <div class="form-group">
                     <label for="id_cliente">Selecciona un cliente:</label>
@@ -58,11 +58,11 @@
                 
                 <div style="display: flex; justify-content: space-between;">
                     <div>
-                        <!-- Boton para procesar la compra -->
-                        <button type="submit" class="btn btn-success">Procesar venta</button>
+                        <!-- Boton para procesar la compra con SweetAlert2 -->
+                        <button type="button" class="btn btn-success" onclick="confirmarProcesarVenta()">Procesar venta</button>
 
-                        <!-- Boton para cancelar la venta con confirmación -->
-                        <a href="/cancelar_venta" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar el pedido?');">Cancelar venta</a>
+                        <!-- Boton para cancelar la venta con SweetAlert2 -->
+                        <a href="#" class="btn btn-danger" onclick="confirmarCancelarVenta()">Cancelar Venta</a>
                     </div>
                     <div>
                         <!-- Boton para volver a la lista de productos -->
@@ -70,8 +70,8 @@
                     </div>
                 </div>
             </form>
-
         </div>
+
         <div style="margin: 0 0 0 10%; max-height: 75vh; overflow-y: auto; display: flex; gap: 10px; flex-direction: column; justify-content: space-between;">
             <div style="padding: 3% 5%; background-color: beige;">
                 <!-- Lista de productos en el pedido -->
@@ -108,18 +108,54 @@
 <!-- Script de Actualizacion de cantidades -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  $(document).ready(function() {
-    $(".cantidad").on("input", function() {
-      var cantidad = $(this).val();
-      var id = $(this).siblings("input[name='productos[]']").val();
-      
-      // Envia los datos al servidor utilizando AJAX
-        $.ajax({
-            type: "POST",
-            url: `/actualizar_cantidad_venta/${id}/${cantidad}`
+    $(document).ready(function() {
+        $(".cantidad").on("input", function() {
+            var cantidad = $(this).val();
+            var id = $(this).siblings("input[name='productos[]']").val();
+            
+            // Envia los datos al servidor utilizando AJAX
+            $.ajax({
+                type: "POST",
+                url: `/actualizar_cantidad_venta/${id}/${cantidad}`
+            });
         });
     });
-  });
 </script> 
+
+<!-- Script de SweetAlert2 para confirmar procesar venta y cancelar venta -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmarProcesarVenta() {
+        Swal.fire({
+            title: '¿Estás seguro de procesar la venta?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, procesar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                document.getElementById('procesarVentaForm').submit();
+            }
+        });
+    }
+
+    function confirmarCancelarVenta() {
+        Swal.fire({
+            title: '¿Estás seguro de cancelar la venta?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No, mantener'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, redirigir a la página de cancelación
+                window.location.href = '/cancelar_venta';
+            }
+        });
+    }
+</script>
 
 {% endblock %}
