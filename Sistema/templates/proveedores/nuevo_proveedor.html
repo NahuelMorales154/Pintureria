@@ -13,8 +13,12 @@
             <input type="text" class="form-control" id="dni" name="dni" pattern="[0-9]+" title="Ingresa solo números">
         </div>
         <div class="form-group">
-            <label for="cuit">CUIT:</label>
-            <input type="text" class="form-control" id="cuit" name="cuit" pattern="[0-9]+" title="Ingresa solo números" required>
+            <label for="cuit" style="display: flex;">CUIT:
+                {% if mensaje %}
+                    <div id="mensaje" style="margin: 0 0 0 10px; color: red;">{{ mensaje }}</div>
+                {% endif %}
+            </label>
+            <input type="text" class="form-control" id="cuit" name="cuit" pattern="[0-9]{11}" title="Ingresar un CUIT valido (Numero unico de 11 digitos)" required>
         </div>
         <div class="form-group">
             <label for="numero">Número:</label>

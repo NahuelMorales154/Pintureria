@@ -59,7 +59,10 @@
             </div>            
         </div>
         <div>
-            <h3 style="padding: 5px; margin: 7vh 0 0 5px;">Mas vendidos</h3>
+            <div style="text-align: right;">
+                <a class="btn btn-success" href="{{ url_for('info_compra_venta')}}"> Compras y Ventas</a>
+            </div>
+            <h3 style="padding: 5px; margin: 5px 0 0 5px;">Mas vendidos</h3>
             <div style="padding: 5px; margin: 0 0 0 5px; background-color: #F2F2F2;">
                 <div style="display: flex; align-items: flex-end; margin: auto;">
                     {% set max_valor = 35 * 10 %}

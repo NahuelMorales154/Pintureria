@@ -18,6 +18,8 @@ mysql.init_app(app)
 # Inicio del pedido/orden de compra
 pedido = []
 lista_vta = []
+listaDNIs = []
+listaCUITs = []
 
 # Ruta principal
 @app.route("/")
@@ -268,7 +270,21 @@ def clientes():
 # Ruta para mostrar el formulario de agregar nuevo cliente
 @app.route("/nuevo_cliente", methods=["GET"])
 def nuevo_cliente():
-    return render_template("clientes/nuevo_cliente.html")
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Obtener los DNIs de los clientes
+    cursor.execute("SELECT dni FROM clientes_proveedores WHERE dni > 0")
+    DNIs = cursor.fetchall()
+
+    listaDNIs.clear()
+    for i in DNIs:
+        listaDNIs.append(i[0])
+
+    conn.commit()
+
+    return render_template("clientes/nuevo_cliente.html", listaDNIs=listaDNIs)
 
 # Ruta para agregar un nuevo cliente a la base de datos
 @app.route("/agregar_cliente", methods=["POST"])
@@ -280,22 +296,24 @@ def agregar_cliente():
     _tipo = 1
 
     # Validacion de datos
-
     if not _nombre or not _dni or not _numero or not _direccion:
         flash("Todos los campos son obligatorios. Por favor, completa todos los campos.")
         return redirect("/nuevo_cliente")
 
-    conn = mysql.connect()
-    cursor = conn.cursor()
+    if int(_dni) in listaDNIs:
+        mensaje = "El DNI ya existe"
+        return render_template("clientes/nuevo_cliente.html", mensaje=mensaje)
+    else:
+            conn = mysql.connect()
+            cursor = conn.cursor()
 
-    # Insertar el nuevo cliente en la base de datos
-    sql = "INSERT INTO `clientes_proveedores` (`nombre`, `dni`, `numero`, `direccion`, `tipo`) VALUES (%s, %s, %s, %s, %s);"
-    datos = (_nombre, _dni, _numero, _direccion, _tipo)
+            # Insertar el nuevo cliente en la base de datos
+            sql = "INSERT INTO `clientes_proveedores` (`nombre`, `dni`, `numero`, `direccion`, `tipo`) VALUES (%s, %s, %s, %s, %s);"
+            datos = (_nombre, _dni, _numero, _direccion, _tipo)
 
-    cursor.execute(sql, datos)
-    conn.commit()
+            cursor.execute(sql, datos)
+            conn.commit()
 
-    flash("Cliente agregado exitosamente.")
     return redirect("/clientes")
 
 # Ruta para eliminar un cliente
@@ -378,6 +396,20 @@ def proveedores():
 # Ruta para mostrar el formulario de agregar nuevo proveedor
 @app.route("/nuevo_proveedor", methods=["GET"])
 def nuevo_proveedor():
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Obtener los DNIs de los proveedores
+    cursor.execute("SELECT cuit FROM clientes_proveedores WHERE cuit > 0")
+    DNIs = cursor.fetchall()
+
+    listaCUITs.clear()
+    for i in DNIs:
+        listaCUITs.append(i[0])
+
+    conn.commit()
+
     return render_template("proveedores/nuevo_proveedor.html")
 
 # Ruta para agregar un nuevo proveedor a la base de datos
@@ -390,22 +422,24 @@ def agregar_proveedor():
     _tipo = 2
 
     # Validacion de datos
-
     if not _nombre or not _cuit or not _numero or not _direccion:
         flash("Todos los campos son obligatorios. Por favor, completa todos los campos.")
         return redirect("/nuevo_proveedor")
 
-    conn = mysql.connect()
-    cursor = conn.cursor()
+    if int(_cuit) in listaCUITs:
+        mensaje = "El CUIT ya existe"
+        return render_template("proveedores/nuevo_proveedor.html", mensaje=mensaje)
+    else:
+            conn = mysql.connect()
+            cursor = conn.cursor()
 
-    # Insertar el nuevo proveedor en la base de datos
-    sql = "INSERT INTO `clientes_proveedores` (`nombre`, `cuit`, `numero`, `direccion`, `tipo`) VALUES (%s, %s, %s, %s, %s);"
-    datos = (_nombre, _cuit, _numero, _direccion, _tipo)
+            # Insertar el nuevo proveedor en la base de datos
+            sql = "INSERT INTO `clientes_proveedores` (`nombre`, `cuit`, `numero`, `direccion`, `tipo`) VALUES (%s, %s, %s, %s, %s);"
+            datos = (_nombre, _cuit, _numero, _direccion, _tipo)
 
-    cursor.execute(sql, datos)
-    conn.commit()
+            cursor.execute(sql, datos)
+            conn.commit()
 
-    flash("Proveedor agregado exitosamente.")
     return redirect("/proveedores")
 
 # Ruta para eliminar un proveedor
@@ -417,7 +451,7 @@ def eliminar_proveedor(id):
     # Eliminar el proveedor con el ID proporcionado
     cursor.execute("DELETE FROM clientes_proveedores WHERE id=%s", (id,))
     conn.commit()
-    return redirect("/proveedor") 
+    return redirect("/proveedores") 
     
 # Ruta para mostrar el formulario de edicion de proveedor
 @app.route("/editar_proveedor/<int:id>", methods=["GET"])
@@ -765,33 +799,6 @@ def ranking():
     cursor.execute("SELECT total, pago, tipo FROM detalles_compra;")
     totales = cursor.fetchall()
 
-
-    egreso_d = 0
-    ingreso_d = 0
-    total_deuda_af = 0
-    total_deuda_ec = 0
-    # 1(compra), 2 (venta), 3(pago de deuda)
-    for i in totales:
-        if i[2] == 1:
-            egreso_d = egreso_d + i[1]
-            total_deuda_ec = total_deuda_ec + i[0]
-            #Aun no contempla pago deuda
-        elif i[2] == 2:
-            ingreso_d = ingreso_d + i[1]
-            total_deuda_af = total_deuda_af + i[0]
-            #Aun no contempla pago deuda
-        elif i[2] == 3:
-            #validar si es a cliente o proveedor // pago deuda
-            continue
-    #compra
-    print(f"Compra: total de deuda: {total_deuda_ec}")
-    print(f"Compra: total de pago: {egreso_d}")
-    print(f"resultado: {total_deuda_ec - egreso_d}")
-    #venta
-    print(f"Compra: total de deuda: {total_deuda_af}")
-    print(f"Compra: total de pago: {ingreso_d}")
-    print(f"resultado: {total_deuda_af - ingreso_d}")
-
     # Consulta adicional para obtener los tipos disponibles
     cursor.execute("SELECT DISTINCT tipo FROM productos;")
     tipos = [tipo[0] for tipo in cursor.fetchall()]
@@ -1113,6 +1120,86 @@ def ver_info_proveedores(id):
     conn.close()
 
     return render_template("proveedores/info_proveedor.html", proveedor=proveedor, movimientos=movimientos, total=total, pago=pago)
+
+#Info Proveedores
+@app.route('/info_compra_venta', methods=['GET'])
+def info_compra_venta():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # conseguir info del proveedor_cliente // No necesario por ahora
+    cursor.execute("SELECT * FROM clientes_proveedores")
+    proveedor_cliente = cursor.fetchone()
+
+    # conseguir info de los movimientos del proveedor_cliente
+    cursor.execute("SELECT id, total, pago, diferencia_cliente, tipo, fecha, id_cliente FROM detalles_compra")
+    movimiento = cursor.fetchall()
+
+    movimiento_list = list(movimiento)
+
+    movimiento_list2 = []
+    for i in movimiento_list:
+        movimiento_list2.append(list(i))
+
+    movimiento = movimiento_list2
+    
+    for i in movimiento:
+        formateo = f'{i[0]:07}'
+        i[0] = formateo
+
+        # Dividir la cadena en partes
+        partes = f'{i[5]}'.split(' ')
+
+        # Dividir la parte de la fecha en año, mes y día
+        anio, mes, dia = partes[0].split('-')
+
+        # Formatear la nueva cadena
+        i[5] = f"{dia}/{mes}/{anio} {partes[1]}"
+
+    # conseguir info de las compras al proveedor_cliente a partir del ID
+    cursor.execute("SELECT productos FROM detalles_compra")
+    compras_json_rows = cursor.fetchall()
+    compras = []
+
+    for row in compras_json_rows:
+        compras_json = row[0]
+        if compras_json == 'Pago de saldo':
+            compras.append(compras_json)
+        else:
+            compras.append(json.loads(compras_json))
+
+    movimientos =  zip(movimiento, compras)
+
+    lista_temp = []
+    for i in movimientos:
+        lista_temp.insert(0, i)
+    
+    movimientos = lista_temp
+
+    # Totales compras y ventas
+
+    # COMPRAS
+    # conseguir la suma del total
+    cursor.execute("SELECT SUM(total) FROM detalles_compra WHERE tipo=%s AND total >= 0", (1,))
+    compra_total = cursor.fetchone()[0]
+
+    # conseguir la suma del total
+    cursor.execute("SELECT SUM(pago) FROM detalles_compra WHERE tipo=%s", (1,))
+    compra_pago = cursor.fetchone()[0]
+
+    # VENTAS
+    # conseguir la suma del total
+    cursor.execute("SELECT SUM(total) FROM detalles_compra WHERE tipo=%s AND total >= 0", (2,))
+    venta_total = cursor.fetchone()[0]
+
+    # conseguir la suma del total
+    cursor.execute("SELECT SUM(pago) FROM detalles_compra WHERE tipo=%s", (2,))
+    venta_pago = cursor.fetchone()[0]
+
+    conn.commit()
+    conn.close()
+
+    return render_template("productos/info_compra_venta.html", proveedor_cliente=proveedor_cliente, movimientos=movimientos, compra_total=compra_total, compra_pago=compra_pago, venta_total=venta_total, venta_pago=venta_pago)
 
 # Iniciar la aplicacion Flask
 if __name__ == "__main__":

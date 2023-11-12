@@ -9,8 +9,12 @@
             <input type="text" class="form-control" id="nombre" name="nombre" required>
         </div>
         <div class="form-group">
-            <label for="dni">DNI:</label>
-            <input type="text" class="form-control" id="dni" name="dni" pattern="[0-9]+" title="Ingresa solo números" required>
+            <label for="dni" style="display: flex;">DNI:
+                {% if mensaje %}
+                    <div id="mensaje" style="margin: 0 0 0 10px; color: red;">{{ mensaje }}</div>
+                {% endif %}
+            </label>
+            <input type="text" class="form-control" id="dni" name="dni" pattern="[0-9]{7,9}" title="Ingresar un DNI valido (Entre 7 y 9 digitos)" required>
         </div>
         <div class="form-group" style="display: none;">
             <label for="cuit">CUIT:</label>
