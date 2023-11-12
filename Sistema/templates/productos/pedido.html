@@ -159,11 +159,11 @@
 <script>
     function confirmarProcesarCompra() {
         Swal.fire({
-            title: '¿Estás seguro de procesar la compra?',
+            title: '¿Estás seguro de realizar la compra?',
             text: 'Esta acción no se puede deshacer',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Sí, procesar',
+            confirmButtonText: 'Sí, realizar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -177,7 +177,7 @@
 
     function confirmarCancelarCompra() {
         Swal.fire({
-            title: '¿Estás seguro de cancelar la venta?',
+            title: '¿Estás seguro de cancelar el pedido?',
             text: 'Esta acción no se puede deshacer',
             icon: 'warning',
             showCancelButton: true,
