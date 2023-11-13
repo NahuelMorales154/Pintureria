@@ -293,6 +293,8 @@ def agregar_cliente():
     _direccion = request.form["direccion"]
     _tipo = 1
 
+    print(_nombre)
+
     # Validacion de datos
     if not _nombre or not _dni or not _numero or not _direccion:
 
@@ -300,7 +302,7 @@ def agregar_cliente():
 
     if int(_dni) in listaDNIs:
         mensaje = "El DNI ya existe"
-        return render_template("clientes/nuevo_cliente.html", mensaje=mensaje)
+        return render_template("clientes/nuevo_cliente.html", mensaje = mensaje, _nombre = _nombre, _numero = _numero, _direccion = _direccion, _dni = _dni)
     else:
             conn = mysql.connect()
             cursor = conn.cursor()
@@ -425,7 +427,7 @@ def agregar_proveedor():
 
     if int(_cuit) in listaCUITs:
         mensaje = "El CUIT ya existe"
-        return render_template("proveedores/nuevo_proveedor.html", mensaje=mensaje)
+        return render_template("proveedores/nuevo_proveedor.html", mensaje = mensaje, _nombre = _nombre, _cuit = _cuit, _numero = _numero, _direccion = _direccion)
     else:
             conn = mysql.connect()
             cursor = conn.cursor()
