@@ -1,0 +1,251 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<style>
+    /* Estilo para eliminar el borde en los botones cuando están seleccionados */
+    .btn:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    /* Estilo para la barra superior */
+    .barra-superior {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    /* Ajustes para los formularios y botones */
+    .filtro-form, .descuento-form, .nuevo-producto-btn {
+        margin-left: 10px;
+    }
+
+    .descuento-form {
+        margin-right: 10px;
+    }
+
+    /* Ajustes para la tabla */
+    .table-responsive {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+</style>
+
+<div class="container mt-4">
+    <!-- Barra superior con filtros y botones -->
+    <div class="barra-superior">
+        <div class="form-inline filtro-form">
+            <!-- Formulario para busqueda por nombre -->
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre" aria-label="Buscar" name="search">
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
+            </form>
+        </div>
+
+        <!-- Formulario para filtrar por tipo -->
+        <form class="form-inline">
+            <!-- Opciones de tipo cargadas desde la base de datos -->
+            <select class="form-control mr-sm-2" name="filterTipo">
+                <option value="">Todos los tipos</option>
+                {% for tipo in tipos %}
+                    <option value="{{ tipo }}">{{ tipo }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Filtrar</button>
+        </form>
+
+        <div class="form-inline descuento-form">
+            <!-- Formulario para aplicar ajuste de precios -->
+            <form action="{{ url_for('apply_discount') }}" method="post" style="display: flex; gap: 0.5rem; padding: 5px; background-color: #F2F2F2;">
+                <!-- <label for="discountPercentage">Cambio de precios:</label> -->
+                <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="-100" max="100" step="0.01" required>
+
+                <!-- Agregar filtro por tipo -->
+                <select class="form-control" name="tipoFiltro">
+                    <option value="">General</option>
+                    {% for tipo in tipos %}
+                        <option value="{{ tipo }}">{{ tipo }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Boton para aplicar ajuste con confirmación -->
+                <button type="button" class="btn btn-warning" onclick="confirmApply()">Aplicar</button>
+            </form>
+        </div>
+
+        <div class="nuevo-producto-btn">
+            <!-- Boton para ingresar un nuevo producto -->
+            <a class="btn btn-success" href="{{ url_for('create')}}">Producto Nuevo</a>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 75% 25%;">
+    <!-- Tabla de productos -->
+    <div class="table-responsive contenedor_interno">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Tipo</th>
+                    <th>Descripcion</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                    {% if (search is none or search.lower() in producto[1].lower()) and (filterTipo is none or filterTipo == "" or filterTipo == producto[2]) %}
+                        <tr>
+                            <td>{{ producto[1] }}</td>
+                            <td>{{ producto[6] }}</td>
+                            <td>{{ producto[2] }}</td>
+                            <td>{{ producto[3] }}</td>
+                            <td style="text-align: center;">
+                                {% if producto[4] <= producto[7] %}
+                                    <p style="color: #FFC107; font-weight: bold; margin: 0;">{{ producto[4] }}</p>
+                                {% else %}
+                                    {{ producto[4] }}
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center;">${{ producto[5] }}</td>
+                            <!-- Acciones -->
+                            <td style="display: table-cell; text-align: center; vertical-align: middle; width: 18%;"> <!-- style="display: flex; justify-content: space-between;" -->
+                                <!-- Boton para editar -->
+                                <a class="btn btn-primary btn-sm" href="/edit/{{ producto[0] }}" title="Editar"><img src="../../static/images/ico/pen-solid.svg" alt="Editar" style="height: 20px;"></a>
+                                <!-- Boton para eliminar con confirmación -->
+                                <a class="btn btn-danger btn-sm" href="#" onclick="confirmDelete('{{ producto[0] }}')" title="Eliminar"><img src="../../static/images/ico/trash-solid.svg" alt="Eliminar" style="height: 20px;"></a>
+                                <!-- Boton para agregar al pedido -->
+                                <a class="btn btn-success btn-sm" href="/add_to_cart_ped/{{ producto[0] }}" title="Agregar al Pedido"><img src="../../static/images/ico/plus-solid.svg" alt="Agregar al Pedido" style="height: 20px;"></a>
+                                <!-- <div> -->
+                                    <!-- Verificar cantidad mínima con stock actual --> 
+                                    <!-- {% if producto[4] <= producto[7] %}                    temporalmente desactivado
+                                        <span class="badge badge-warning">¡Stock bajo!</span>
+                                    {% endif %} -->
+                                <!-- </div> -->
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Orden de venta -->
+    <div>
+        <div style="margin-left: 10px;">
+            <div>
+                <div style="max-height: 40vh; overflow-y: auto;">
+                    <div style="padding: 3% 5%; background-color: beige;">
+                        <!-- Lista de productos en el pedido -->
+                        <ul>
+                            <div style="display: flex; justify-content: space-between;">
+                                <div><h5>Productos:</h5></div>
+                                <div style="width: 25%;"><h5>Cant:</h5></div>
+                            </div>
+                            {% for item in lista_pedido %}
+                                <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
+                                <div style="display: flex; justify-content: space-between; margin: 2px 0;">
+                                    <div style="display: flex;">
+                                        <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item['nombre'] }}">{{ item['nombre'] }}</h6>
+                                    </div>
+                                    <div style="text-align: right; width: 25%;">
+                                        <div>
+                                            <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                                            <input type="number" class="cantidad" name="cantidades[]" value="{{ item['cantidad'] }}" style="width: 100%; text-align: center;">
+                                            <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <!-- Formulario para procesar la compra -->
+                    <form method="post" action="/procesar_compra">
+                        <!-- Campos ocultos para cada producto en el pedido -->
+                        {% for item in lista_pedido %}
+                            <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                            <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
+                            <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
+                        {% endfor %}
+                        <div style="text-align: center; display: flex; gap: 10px;">
+                            <!-- Botón para procesar la compra -->
+                            <button type="submit" class="btn btn-success">Procesar Pedido</button>
+                            <!-- Boton para cancelar la venta con confirmación -->
+                            <a href="/cancelar_pedido_in" class="btn btn-danger" onclick="return confirm('¿Estás seguro de cancelar el pedido?');">Cancelar Pedido</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- {% for item in lista_pedido %}
+                <h6>{{ item }}</h6>
+            {% endfor %} -->
+        </div>
+    </div>
+</div>    
+
+<!-- Script de Actualizacion de cantidades -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $(".cantidad").on("input", function() {
+      var cantidad = $(this).val();
+      var id = $(this).siblings("input[name='productos[]']").val();
+      
+      // Envia los datos al servidor utilizando AJAX
+        $.ajax({
+            type: "POST",
+            url: `/actualizar_cantidad_pedido/${id}/${cantidad}`
+        });
+    });
+  });
+</script> 
+
+<!-- Script de SweetAlert2 para confirmar eliminación -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmDelete(productID) {
+    // Mostrar un cuadro de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción no se puede deshacer',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirigir a la página de eliminación con el ID del producto
+            window.location.href = "/destroy/" + productID;
+        }
+    });
+}
+
+// Script de SweetAlert2 para confirmar aplicar ajuste
+function confirmApply() {
+    // Mostrar un cuadro de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción cambiará los precios según el ajuste ingresado',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, aplicar ajuste',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Enviar el formulario si se confirma la acción
+            document.querySelector("form[action='/apply_discount']").submit();
+        }
+    });
+}
+</script>
+
+{% endblock %}

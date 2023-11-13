@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="container">
+    <h2>Agregar Nuevo Proveedor</h2>
+    <form method="POST" action="/agregar_proveedor">
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ _nombre }}" required>
+        </div>
+        <div class="form-group" style="display: none;">
+            <label for="dni">DNI:</label>
+            <input type="text" class="form-control" id="dni" name="dni" pattern="[0-9]+" title="Ingresa solo números">
+        </div>
+        <div class="form-group">
+            <label for="cuit" style="display: flex;">CUIT:
+                {% if mensaje %}
+                    <div id="mensaje" style="margin: 0 0 0 10px; color: red;">{{ mensaje }}</div>
+                {% endif %}
+            </label>
+            <input type="text" class="form-control" id="cuit" name="cuit" pattern="[0-9]{11}" title="Ingresar un CUIT valido (Numero unico de 11 digitos)" value="{{ _cuit }}" required>
+        </div>
+        <div class="form-group">
+            <label for="numero">Número:</label>
+            <input type="text" class="form-control" id="numero" name="numero" pattern="[0-9]+" title="Ingresa solo números" value="{{ _numero }}" required>
+        </div>
+        <div class="form-group">
+            <label for="direccion">Dirección:</label>
+            <input type="text" class="form-control" id="direccion" name="direccion" value="{{ _direccion }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Agregar Proveedor</button>
+        <a href="/proveedores" class="btn btn-secondary">Regresar</a>
+    </form>
+</div>
+
+{% endblock %}

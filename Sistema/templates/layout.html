@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Configuración de metadatos y carga de Bootstrap -->
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../static/style.css">
+        <script src="https://kit.fontawesome.com/41bcea2ae3.js" crossorigin="anonymous"></script>
+        
+        <title>Pintureria Pehuajo</title>
+    </head>
+    <body id="body">
+    
+        <header>
+            <div class="icon__menu">
+                <i class="icono" id="btn_open"><img src="../static/images/ico/bars-solid.svg" alt="home" style="width: 20px;"></i>
+            </div>
+        </header>
+    
+        <div class="menu__side" id="menu_side">
+    
+            <div class="name__page">
+                <i class="icono" style="opacity: 0;"><img src="../static/images/ico/bars-solid.svg" alt="home" style="width: 20px;"></i>
+                <h5>Pintureria Pehuajo</h5>
+                <!-- <img src="../static/images/logo_PP.svg" alt="Logo_PP" style="height: 50px;"> -->
+            </div>
+    
+            <div class="options__menu">
+                
+                <a  href="{{ url_for('home') }}" class="menu-link {% if current_page == 'home' %}selected{% endif %}" data-page="home">
+                    <div class="option">
+                        <i class="icono" title="home"><img src="../static/images/ico/house-solid.svg" alt="home"></i>
+                        <h4>Home</h4>
+                    </div>
+                </a>
+    
+                <a  href="{{ url_for('products') }}" class="menu-link {% if current_page == 'productos' %}selected{% endif %}" data-page="productos">
+                    <div class="option">
+                        <i class="icono" title="Productos"><img src="../static/images/ico/table-list-solid.svg"></i>
+                        <h4>Productos</h4>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('venta') }}" class="menu-link {% if current_page == 'ventas' %}selected{% endif %}" data-page="ventas">
+                    <div class="option">
+                        <i class="icono" title="Ventas"><img src="../static/images/ico/cart-shopping-solid.svg" alt="Ventas"></i>
+                        <h4>Ventas</h4>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('mostrar_pedido') }}" class="menu-link {% if current_page == 'pedido' %}selected{% endif %}" data-page="pedido">
+                    <div class="option">
+                        <i class="icono" title="Pedido"><img src="../static/images/ico/box-open-solid.svg" alt="Pedido"></i>
+                        <h4>Pedido</h4>
+                    </div>
+                </a>
+                
+                <a href="{{ url_for('clientes') }}" class="menu-link {% if current_page == 'clientes' %}selected{% endif %}" data-page="clientes">
+                    <div class="option">
+                        <i class="icono" title="Clientes"><img src="../static/images/ico/address-card-regular.svg" alt="Clientes"></i>
+                        <h4>Clientes</h4>
+                    </div>
+                </a>
+    
+                <a href="{{ url_for('proveedores') }}" class="menu-link {% if current_page == 'proveedores' %}selected{% endif %}" data-page="proveedores">
+                    <div class="option">
+                        <i class="icono" title="Proveedores"><img src="../static/images/ico/truck-solid.svg" alt="Proveedores"></i>
+                        <h4>Proveedores</h4>
+                    </div>
+                </a>
+    
+                <a href="{{ url_for('ranking') }}" class="menu-link {% if current_page == 'ranking' %}selected{% endif %}" data-page="ranking">
+                    <div class="option">
+                        <i class="icono" title="Ranking"><img src="../static/images/ico/chart-line-solid.svg" alt="Ranking"></i>
+                        <h4>Ranking</h4>
+                    </div>
+                </a>
+            </div>
+        </div>
+    
+        <div style="height: 100vh; display: flex; flex-direction: column; justify-content: space-between;">
+        <main> <!-- continuacion  -->
+    
+        <!--- Barra de navegacion -->
+        <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> -->
+            <!-- Logo y titulo de la barra de navegacion -->
+            <!-- <a class="navbar-brand" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='Logo1.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
+                Pintureria Pehuajo
+            </a> -->
+            <!-- Boton para desplegar la barra de navegacion en dispositivos moviles -->
+            <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#my-nav" aria-controls="my-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div id="my-nav" class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('index') }}">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white disabled" href="{{ url_for('mostrar_pedido') }}" tabindex="-1" aria-disabled="true">Pedido</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white disabled" href="{{ url_for('clientes') }}" tabindex="-1" aria-disabled="true">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white disabled" href="#" tabindex="-1" aria-disabled="true">Proveedores</a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link text-white disabled" href="#" tabindex="-1" aria-disabled="true">Ventas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('ranking') }}">Ranking</a>
+                    </li>
+                </ul>
+            </div>
+        </nav> -->
+    
+        <!-- Contenido principal -->
+        <!-- <div class="container text-center mt-5">
+            <img src="{{ url_for('static', filename='Logo1.png') }}" alt="Logo" width="100" height="100"> -->
+            <!-- <h1 class="mt-3 text-primary" style="text-align: center;">Pintureria Pehuajo</h1> -->
+        <!-- </div> -->
+
+        {% block body %}
+        {% endblock %}
+        </main> <!-- continuacion  -->
+
+        <!-- Pie de página -->
+        <footer class="bg-dark text-white text-center py-3" style="position: sticky; bottom: 0;">
+            Copyright de Pintureria Pehuajo &copy; {{ current_year }}
+        </footer>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            var menuLinks = document.querySelectorAll(".menu-link");
+
+            menuLinks.forEach(function (link) {
+                link.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    
+                    // Remover la clase "selected" de todos los enlaces
+                    menuLinks.forEach(function (otherLink) {
+                        otherLink.classList.remove("selected");
+                    });
+
+                    // Agregar la clase "selected" solo al enlace actual
+                    link.classList.add("selected");
+                    
+                    // Redirigir a la URL del enlace
+                    window.location.href = link.getAttribute("href");
+                });
+            });
+
+            // Restaurar la clase "selected" basada en la página actual
+            var currentPage = window.location.pathname.split('/').pop();
+            var currentLink = document.querySelector(".menu-link[data-page='" + currentPage + "']");
+            
+            if (currentLink) {
+                currentLink.classList.add("selected");
+            }
+        });
+
+
+            //Ejecutar función en el evento click
+            document.getElementById("btn_open").addEventListener("click", open_close_menu);
+
+            //Declaramos variables
+            var side_menu = document.getElementById("menu_side");
+            var btn_open = document.getElementById("btn_open");
+            var body = document.getElementById("body");
+
+            //Evento para mostrar y ocultar menú
+                function open_close_menu(){
+                    body.classList.toggle("body_move");
+                    side_menu.classList.toggle("menu__side_move");
+                }
+
+            //Si el ancho de la página es menor a 760px, ocultará el menú al recargar la página
+
+            if (window.innerWidth < 760){
+
+                body.classList.add("body_move");
+                side_menu.classList.add("menu__side_move");
+            }
+
+            //Haciendo el menú responsive(adaptable)
+
+            window.addEventListener("resize", function(){
+
+                if (window.innerWidth > 760){
+
+                    body.classList.remove("body_move");
+                    side_menu.classList.remove("menu__side_move");
+                }
+
+                if (window.innerWidth < 760){
+
+                    body.classList.add("body_move");
+                    side_menu.classList.add("menu__side_move");
+                }
+            });
+        </script>
+    </body>
+</html>

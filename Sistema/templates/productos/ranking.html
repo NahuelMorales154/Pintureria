@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="container mt-4">
+    <h2 class="mb-3">Ranking</h2>
+    <div style="display: grid; grid-template-columns: 70% 30%;">
+        <div>
+            <!-- Formulario de filtro por tipo -->
+            <div style="display: flex; justify-content: space-between;">
+                <form class="form-inline mb-3">
+                    <label for="tipoFiltro" class="mr-2">Filtrar por Tipo:</label>
+                    <select id="tipoFiltro" class="form-control mr-2" name="tipo">
+                        <option value="">Todos los tipos</option>
+                        {% for tipo in tipos %}
+                        <option value="{{ tipo }}" {% if tipo_filtro == tipo %}selected{% endif %}>{{ tipo }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </form>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- Nuevo botón "Resetear" con SweetAlert2 -->
+                    <form id="resetForm" action="{{ url_for('reset_ranking') }}" method="post">
+                        <button type="button" class="btn btn-danger" onclick="confirmReset()">Resetear</button>
+                    </form>
+
+                    <!-- Espacio para alinear con la esquina superior derecha -->
+                    <div></div>
+                </div>        
+            </div>
+
+            <div class="table-responsive" style="height: 65vh;">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Marca</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Salida</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos_ranking %}
+                        <tr>
+                            <td>{{ producto[1] }}</td>
+                            <td>{{ producto[6] }}</td>
+                            <td>{{ producto[2] }}</td>
+                            <td>{{ producto[3] }}</td>
+                            <td style="text-align: center;">{{ producto[4] }}</td>
+                            <td style="text-align: center;">${{ producto[5] }}</td>
+                            <td style="text-align: center;">{{ producto[8] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>            
+        </div>
+        <div>
+            <div style="text-align: right;">
+                <a class="btn btn-success" href="{{ url_for('info_compra_venta')}}"> Compras y Ventas</a>
+            </div>
+            <h3 style="padding: 5px; margin: 5px 0 0 5px;">Mas vendidos</h3>
+            <div style="padding: 5px; margin: 0 0 0 5px; background-color: #F2F2F2;">
+                <div style="display: flex; align-items: flex-end; margin: auto;">
+                    {% set max_valor = 35 * 10 %}
+                    
+                    {% for numero in mas_vendido %}
+                        {% set porcentaje = (numero[0] / mas_vendido_total) * 100 %} 
+                        {% set altura = (porcentaje / 100) * max_valor %}
+                        <div style="background-color: #1783DB; height: {{ altura }}px; width: 40px; display: flex; align-items: flex-end; margin: 5px; text-align: center;">
+                            <p style="width: 100%; margin: 0 0 5px 0; font-weight: bold;">
+                                {{ numero[0] }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div style="padding: 5px; margin: 0 0 0 5px;">
+                <div style="display: flex; align-items: flex-end;">
+                    {% for numero in mas_vendido %}
+                        <div style="width: 40px; display: flex; align-items: flex-end; margin: 5px; text-align: center;">
+                            <p style="width: 100%; transform: rotate(90deg); white-space: nowrap;  margin: 10px 0 0 0;">
+                                {{ numero[1] }}        
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script de SweetAlert2 para confirmar reseteo -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmReset() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción es permanente y se perderán los datos de salida, quedaran en 0',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, resetear',
+            cancelButtonText: 'No, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Enviar el formulario al endpoint de reseteo
+                document.getElementById('resetForm').submit();
+            }
+        });
+    }
+</script>
+
+{% endblock %}

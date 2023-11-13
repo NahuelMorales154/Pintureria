@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <h2>Saldo de deuda: {{ cliente[1] }}</h2>
+        <p>Saldo actual: ${{ cliente[2] }}</p>
+
+        <form action="/procesar_pago/{{ cliente[0] }}" method="post">
+            <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 10px;">
+                <div class="input-group" style="width: 100%; gap: 10px;">
+                    <label for="monto">Monto del Pago:</label>
+                    <input type="number" name="monto" step="0.01" required class="form-control" style="height: 40px;">                
+                </div>
+                <button type="submit" class="btn btn-success mb-3" style="width: 50%;">Realizar Pago</button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Script de SweetAlert2 para confirmar eliminación -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDelete(clienteID) {
+            // Mostrar un cuadro de diálogo de confirmación
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la página de eliminación de cliente con el ID del cliente
+                    window.location.href = "/eliminar_cliente/" + clienteID;
+                }
+            });
+        }
+    </script>
+{% endblock %}

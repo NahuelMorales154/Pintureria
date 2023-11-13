@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="grid_home">
+    <div>
+        <a href="{{ url_for('products') }}" style="margin: 10px; padding: auto; text-decoration: none;">
+            <div>
+                <img src="../static/images/ico/table-list-solid.svg" alt="productos" style=" width: 40%; padding: 0 0 10px 0;">
+                <h2 style="padding: 0 20px; color: white;">Lista de Productos</h2>
+            </div>
+        </a>
+    </div>
+    <div>
+        <a href="{{ url_for('venta') }}" style="margin: 10px; padding: auto; text-decoration: none;">
+            <div>
+                <img src="../static/images/ico/cash-register-solid.svg" alt="productos" style=" width: 40%; padding: 0 0 10px 0;">
+                <h2 style="padding: 0 20px; color: white;">Generar Venta</h2>
+            </div>
+        </a>
+    </div>
+    <div>
+        <a href="{{ url_for('products') }}" style="margin: 10px; padding: auto; text-decoration: none;">
+            <div>
+                <img src="../static/images/ico/box-open-solid.svg" alt="productos" style=" width: 40%; padding: 0 0 10px 0;">
+                <h2 style="padding: 0 20px; color: white;">Generar Compra</h2>
+            </div>
+        </a>
+    </div>
+    <div>
+        <a href="{{ url_for('clientes') }}" style="margin: 10px; padding: auto; text-decoration: none;">
+            <div>
+                <img src="../static/images/ico/address-card-regular.svg" alt="productos" style=" width: 40%; padding: 0 0 10px 0;">
+                <h2 style="padding: 0 20px; color: white;">Clientes</h2>
+            </div>
+        </a>
+    </div>
+    <div>
+        <a href="{{ url_for('proveedores') }}" style="margin: 10px; padding: auto; text-decoration: none;">
+            <div>
+                <img src="../static/images/ico/truck-solid.svg" alt="productos" style=" width: 40%; padding: 0 0 10px 0;">
+                <h2 style="padding: 0 20px; color: white;">Proveedores</h2>
+            </div>
+        </a>
+    </div>
+    <div>
+        <a href="{{ url_for('ranking') }}" style="margin: 10px; padding: auto; text-decoration: none;">
+            <div>
+                <img src="../static/images/ico/chart-line-solid.svg" alt="productos" style=" width: 40%; padding: 0 0 10px 0;">
+                <h2 style="padding: 0 20px; color: white;">Ranking</h2>
+            </div>
+        </a>
+    </div>
+</div>
+
+{% endblock %}

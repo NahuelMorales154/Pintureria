@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body style="padding: 0; margin: 0;">
+    <div style="display: flex; height: 100vh; width: 100vw; background-color: #007bff; text-align: center;">
+        <div style="width: 50%; margin: auto;">
+            <img style="height: 40vh;" src="../../static/images/logo_PP.svg" alt="img">
+
+            {% if mensaje_error %}
+            <p style="color: white;">{{ mensaje_error }}</p>
+            {% endif %}
+
+            <form method="POST" action="/login" style="padding: 20px 0 0 0;">
+                <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" required style="width: 50%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 3px; text-align: center;">
+                <br>
+                <button type="submit" style="background-color: #dc3545; color: #fff; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer;">Ingresar</button>
+            </form>
+
+        </div>
+
+    </div>
+</body>
+</html>

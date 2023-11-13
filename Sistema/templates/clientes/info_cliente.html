@@ -1,0 +1,132 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="container mt-4">
+    <!-- Titulo de la pagina -->
+    <h2>Informacion de Cliente</h2>
+    <div style="display: grid; grid-template-columns: 30% 70%;">
+        <!-- Informacion del usuario -->
+        <div style="display: flex; gap: 10px; flex-direction: column; justify-content: space-between;">
+            <div style="display: grid; grid-template-columns: 30% 70%; margin: 10px 0 0 0; padding: 10px; background-color: #F2F2F2; border-radius: 10px;">
+                <div style="margin: auto; width: 100%;">
+                    <h6>Nombre:</h6>
+                </div>
+                <div>
+                    <input type="text" id="dato" name="dato" value="{{ cliente[1] }}" readonly style="margin: 1px; width: 100%; padding: 0 10px;">
+                </div>
+                <div style="margin: auto; width: 100%;">
+                    <h6>DNI:</h6>
+                </div>
+                <div>
+                    <input type="text" id="dato" name="dato" value="{{ cliente[2] }}" readonly style="margin: 1px; width: 100%; padding: 0 10px;">
+                </div>
+                <div style="margin: auto; width: 100%;">
+                    <h6>Numero:</h6>
+                </div>
+                <div>
+                    <input type="text" id="dato" name="dato" value="{{ cliente[3] }}" readonly style="margin: 1px; width: 100%; padding: 0 10px;">
+                </div>
+                <div style="margin: auto; width: 100%;">
+                    <h6>Direccion:</h6>
+                </div>
+                <div>
+                    <input type="text" id="dato" name="dato" value="{{ cliente[4] }}" readonly style="margin: 1px; width: 100%; padding: 0 10px;">
+                </div>
+            </div>
+            <div style="grid-column: 2; padding: 10px; background-color: #F2F2F2; border-radius: 10px;">
+                <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+                    <p style="border: none; margin: 0;">Total:</p>
+                    <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                        <p style="text-align: center; grid-column: 3; margin: 0;">${{ total }}</p>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+                    <p style="border: none; margin: 0;">Pago:</p>
+                    <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                        <p style="text-align: center; grid-column: 3; margin: 0;">${{ pago }}</p>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+                    <p style="border: none; margin: 0;">Diferencia:</p>
+                    <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                        {% if pago is not none and total is not none %}
+                            {% if pago - total < 0 %}
+                                <p style="margin: 0; text-align: center; grid-column: 3; border-top: 1px solid #000000; color: red; margin: 0;">${{ pago - total  }}</p>
+                            {% elif pago - total == 0 %}
+                                <p style="margin: 0; text-align: center; grid-column: 3; border-top: 1px solid #000000; margin: 0;">${{ pago - total }}</p>
+                            {% else %}
+                                <p style="margin: 0; text-align: center; grid-column: 3; border-top: 1px solid #000000; color: green; margin: 0;">${{ pago - total  }}</p>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- informacion de compras -->
+        <div style="margin: 0 0 0 3%; height: 75vh; overflow-y: auto; display: flex; gap: 10px; flex-direction: column; background-color: #C1C1C1;">
+            {% for item in movimientos %}
+                <div class="style_movimientos" style="margin: 10px 5px; padding: 10px; background-color: #F2F2F2; border-radius: 10px;">
+                    <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+                        <div style="display: flex; justify-content: space-between;">
+                            <p style="border: none;">#{{ item[0][0] }}</p>
+                            <p style="text-align: center;">{{ item[0][5] }}</p>    
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                            {% if item[0][4] == 3 %}
+                                <p style="text-align: center; border-top: 1px solid #000000; grid-column: 1/-2;">Pago de deuda</p>
+                            {% else %}
+                                <p style="text-align: center; border-top: 1px solid #000000;">Cantidad</p>
+                                <p style="text-align: center; border-top: 1px solid #000000;">Precio</p>
+                            {% endif %}
+                            <p style="text-align: center; border-top: 1px solid #000000;">Total</p>
+                        </div>
+                    </div>
+                    {% if item[0][4] != 3 %}
+                        <hr style="border-top: 1px solid #000000; margin: 0;">
+                    {% endif %}
+                    {% if item[0][4] != 3 %}
+                        {% for i in item[1] %}
+                            <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+                                <div>
+                                    <p> {{ i['nombre'] }} </p>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                                    <p style="text-align: center;"> {{ i['cantidad'] }} </p>
+                                    <p style="text-align: center;"> ${{ i['precio'] }} </p>
+                                    <p style="text-align: center;"> ${{ i['precio'] * i['cantidad'] }} </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <hr style="border-top: 1px solid #000000; margin: 0;">
+                    <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+                        <p style="border: none;">Total:</p>
+                        <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                            <p style="text-align: center; grid-column: 3;">${{ item[0][1] }}</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+                        <p style="border: none;">Pago:</p>
+                        <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                            <p style="text-align: center; grid-column: 3;">${{ item[0][2] }}</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+                        <p style="border: none;">Diferencia:</p>
+                        <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                            {% if item[0][3] < 0 %}
+                                <p style="text-align: center; grid-column: 3; border-top: 1px solid #000000; color: red;">${{ item[0][3] }}</p>
+                            {% elif item[0][3] == 0 %}
+                                <p style="text-align: center; grid-column: 3; border-top: 1px solid #000000;">${{ item[0][3] }}</p>
+                            {% else %}
+                                <p style="text-align: center; grid-column: 3; border-top: 1px solid #000000; color: green;">${{ item[0][3] }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

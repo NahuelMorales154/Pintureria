@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="container mt-4 contenedor_interno" style="height: max-content;">
+    <h2 class="mb-3">Formulario de edición</h2>
+
+    <form method="post" action="/update" enctype="multipart/form-data" class="card">
+        <div class="card-header">
+            Editar producto
+        </div>
+        <div class="card-body" style="display: grid; grid-template-columns: repeat(2,1fr); gap: 10px;">
+            <!-- <h5 class="card-title" style="grid-column: 1/-1;">Datos del producto</h5> -->
+
+            <div class="form-group">
+                <label for="txtNombre">Nombre</label>
+                <input id="txtNombre" value="{{ producto[1] }}" class="form-control" type="text" name="txtNombre">
+            </div>
+
+            <div class="form-group">
+                <label for="txtMarca">Marca</label>
+                <input id="txtMarca" value="{{ producto[6] }}" class="form-control" type="text" name="txtMarca">
+            </div>
+
+            <div class="form-group">
+                <label for="txtTipo">Tipo</label>
+                <input id="txtTipo" value="{{ producto[2] }}" class="form-control" type="text" name="txtTipo">
+            </div>
+
+            <div class="form-group">
+                <label for="txtDescripcion">Descripción</label>
+                <input id="txtDescripcion" value="{{ producto[3] }}" class="form-control" type="text" name="txtDescripcion">
+            </div>
+
+            <div class="form-group">
+                <label for="txtPrecio">Precio</label>
+                <input id="txtPrecio" value="{{ producto[5] }}" class="form-control" type="number" name="txtPrecio">
+            </div>
+
+            <div class="form-group">
+                <label for="txtCantidad">Cantidad</label>
+                <input id="txtCantidad" value="{{ producto[4] }}" class="form-control" type="number" name="txtCantidad">
+            </div>
+
+            <div class="form-group">
+                <label for="txtMinimo">Cantidad Mínima</label>
+                <input id="txtMinimo" value="{{ producto[7] }}" class="form-control" type="number" name="txtMinimo">
+            </div>
+
+            <div class="form-group">
+                <!-- <label for="txtSalida">Cantidad de Salida</label> -->
+                <input id="txtSalida" value="{{ producto[8] }}" class="form-control" type="hidden" name="txtSalida">
+            </div>
+
+            <input type="hidden" value="{{ producto[0] }}" name="txtID" id="txtID">
+
+            <div class="form-group">
+                <input class="btn btn-success" type="submit" value="Actualizar">
+                <a href="{{url_for('products')}}" class="btn btn-primary">Regresar</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="container mt-4">
+    <!-- Titulo de la pagina -->
+    <h2>Carga de productos</h2>
+    <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+        <div>
+            <!-- Formulario para procesar la compra /venta -->
+            <form id="procesarCompraForm" method="post" action="/procesar_compra" onsubmit="return confirmarProcesarCompra();">
+                <!-- Campo para seleccionar el cliente / proveedor -->
+                <div class="form-group">
+                    <label for="id_proveedor">Selecciona un Proveedor:</label>
+                    <select class="form-control" id="id_proveedor" name="id_proveedor">
+                        {% for proveedor in proveedor_data %}
+                            <option value="{{ proveedor[0] }}">{{ proveedor[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Campos ocultos para cada producto en el pedido -->
+                {% for item in pedido %}
+                    <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                    <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
+                    <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
+                {% endfor %}
+
+                <!-- Campo para ingresar el pago al cliente / proveedor -->
+                <div class="form-group">
+                    <label for="pago_a_proveedor">Pago:</label>
+                    <input type="number" class="form-control" id="pago_a_proveedor" name="pago_a_proveedor" required>
+                
+                    <input type="hidden" id="fecha_hora" name="fecha_hora" readonly>
+                    <script>
+                        window.addEventListener('DOMContentLoaded', function () {
+                            // Obtener el campo de fecha y hora por su ID
+                            var campoFechaHora = document.getElementById('fecha_hora');
+                
+                            // Crear un objeto Date para obtener la fecha y hora actual
+                            var fechaActual = new Date();
+                
+                            // Formatear la fecha y hora actual como una cadena con formato personalizado
+                            var fechaActualFormateada = fechaActual.getFullYear() + '-' + 
+                                                       (fechaActual.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                                                       fechaActual.getDate().toString().padStart(2, '0') + ' ' +
+                                                       fechaActual.getHours().toString().padStart(2, '0') + ':' +
+                                                       fechaActual.getMinutes().toString().padStart(2, '0') + ':' +
+                                                       fechaActual.getSeconds().toString().padStart(2, '0');
+                
+                            // Asignar la fecha y hora actual al campo de fecha y hora
+                            campoFechaHora.value = fechaActualFormateada;
+                        });
+                    </script>
+                </div>
+
+                <!-- Mostrar el total de la compra -->
+                <p>Total de la compra: ${{ total }}</p>
+                
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <!-- Boton para procesar la compra -->
+                        <button type="submit" class="btn btn-success">Procesar Compra</button>
+
+                        <!-- Boton para cancelar la venta con SweetAlert2 -->
+                        <a href="/cancelar_pedido" class="btn btn-danger" onclick="return confirmarCancelarCompra();">Cancelar Compra</a>                    </div>
+                    <div>
+                        <!-- Boton para volver a la lista de productos -->
+                        <a href="/productos" class="btn btn-success" style="padding: 2px;"><img src="../../static/images/ico/table-list-solid.svg" style="height: 2rem;"></a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div style="margin: 0 0 0 10%; max-height: 75vh; overflow-y: auto; display: flex; gap: 10px; flex-direction: column; justify-content: space-between;">
+            <div style="padding: 3% 5%; background-color: beige;">
+                <!-- Lista de productos en el pedido -->
+                <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                    <h5>Productos:</h5>
+                    <h5 style="text-align: center;">Cant:</h5>
+                    <div style="display: flex; justify-content: space-between;">
+                        <h5 style="text-align: center;">Costo:</h5><h5 style="text-align: center;">Total:</h5>
+                    </div>
+                    {% for item in pedido %}
+                        <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
+                        <div style="grid-column: 1/-1; display: grid; grid-template-columns: repeat(3,1fr); margin: 2px 0;">
+                            <div>
+                                <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item['nombre'] }}">{{ item['nombre'] }}</h6>
+                            </div>
+                            <div style="text-align: center;">
+                                <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                                <input type="number" class="cantidad" name="cantidades[]" value="{{ item['cantidad'] }}" style="width: 50%; text-align: center;">
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <div>
+                                    <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                                    <input type="number" class="precio" name="precios[]" value="{{ item['precio'] }}" style="width: 80%; text-align: center;">
+                                </div>
+                                <div>
+                                    <h6>${{ item['precio'] * item['cantidad'] }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div> 
+            </div>
+            <a href="/actualizar_pedido" class="btn btn-success">Actualizar Pedido</a>  
+        </div>
+    </div>
+</div>
+
+<!-- Script de Actualizacion de cantidades -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $(".cantidad").on("input", function() {
+      var cantidad = $(this).val();
+      var id = $(this).siblings("input[name='productos[]']").val();
+      
+      // Envia los datos al servidor utilizando AJAX
+        $.ajax({
+            type: "POST",
+            url: `/actualizar_cantidad_pedido/${id}/${cantidad}`
+        });
+    });
+
+    $(".precio").on("input", function() {
+      var precio = $(this).val();
+      var id = $(this).siblings("input[name='productos[]']").val();
+      
+      // Envia los datos al servidor utilizando AJAX
+        $.ajax({
+            type: "POST",
+            url: `/actualizar_precio_pedido/${id}/${precio}`
+        });
+    });
+  });
+</script>
+
+<!-- Script de Actualizacion de precios -->
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $(".precio").on("input", function() {
+      var precio = $(this).val();
+      var id = $(this).siblings("input[name='productos[]']").val();
+      
+      // Envia los datos al servidor utilizando AJAX
+        $.ajax({
+            type: "POST",
+            url: `/actualizar_precio_pedido/${id}/${precio}`
+        });
+    });
+  });
+</script>  -->
+
+<!-- Script de SweetAlert2 para confirmar procesar venta y cancelar venta -->
+<!-- Script de SweetAlert2 para confirmar procesar venta y cancelar venta -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmarProcesarCompra() {
+        Swal.fire({
+            title: '¿Estás seguro de realizar la compra?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, realizar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                document.getElementById('procesarCompraForm').submit();
+            }
+        });
+        
+        return false; // Evitar que el formulario se envíe directamente
+    }
+
+    function confirmarCancelarCompra() {
+        Swal.fire({
+            title: '¿Estás seguro de cancelar el pedido?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No, mantener'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, redirigir a la página de cancelación
+                window.location.href = '/cancelar_pedido';
+            }
+        });
+
+        return false; // Evitar que el enlace se siga directamente
+    }
+</script>
+
+{% endblock %}

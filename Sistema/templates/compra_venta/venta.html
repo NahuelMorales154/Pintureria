@@ -1,0 +1,176 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<!-- Css -->
+<style>
+    /* Estilo para eliminar el borde en los botones cuando están seleccionados */
+    .btn:focus {
+        outline: none;
+        box-shadow: none;
+    }
+</style>
+
+<div class="container mt-4">
+    <!-- Barra superior con filtros y botones -->
+    <div style="display: flex; margin: 0 0 20px 0;">
+        <div style="padding-right: 10px;">
+            <!-- Formulario para búsqueda por nombre -->
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre" aria-label="Buscar" name="search">
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
+            </form>
+        </div>
+
+        <div>
+            <!-- Formulario para filtrar por tipo -->
+            <form class="form-inline" style="justify-content: center;">
+                <!-- Opciones de tipo cargadas desde la base de datos -->
+                <select class="form-control mr-sm-2" name="filterTipo">
+                    <option value="">Todos los tipos</option>
+                    {% for tipo in tipos %}
+                        <option value="{{ tipo }}">{{ tipo }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Filtrar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 75% 25%;">
+    <!-- Tabla de productos -->
+    <div class="table-responsive contenedor_interno">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Tipo</th>
+                    <th>Descripcion</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                    {% if (search is none or search.lower() in producto[1].lower()) and (filterTipo is none or filterTipo == "" or filterTipo == producto[2]) %}
+                        <tr>
+                            <td>{{ producto[1] }}</td>
+                            <td>{{ producto[6] }}</td>
+                            <td>{{ producto[2] }}</td>
+                            <td>{{ producto[3] }}</td>
+                            <td style="text-align: center;">
+                                {% if producto[4] <= producto[7] %}
+                                    <p style="color: #FFC107; font-weight: bold; margin: 0;">{{ producto[4] }}</p>
+                                {% else %}
+                                    {{ producto[4] }}
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center;">${{ producto[5] }}</td>
+                            <!-- Acciones -->
+                            <td style="display: flex; justify-content: space-between;">
+                                <div>
+                                    <!-- Botón para agregar al pedido -->
+                                    <a class="btn btn-success btn-sm" href="/add_to_cart_vta/{{ producto[0] }}"><img src="../../static/images/ico/plus-solid.svg" alt="Agregar al Pedido" style="height: 20px;"></a>
+                                </div>
+                                <div>
+                                    <!-- Verificar cantidad mínima con stock actual -->
+                                    <!-- {% if producto[4] <= producto[7] %}                    temporalmente desactivado
+                                        <span class="badge badge-warning">¡Stock bajo!</span>
+                                    {% endif %} -->
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Orden de venta -->
+    <div>
+        <div style="margin-left: 10px;">
+            <div>
+                <div style="max-height: 40vh; overflow-y: auto;">
+                    <div style="padding: 3% 5%; background-color: beige;">
+                        <!-- Lista de productos en la venta -->
+                        <div style="display: grid; grid-template-columns: repeat(3,1fr);">
+                            <h5>Productos:</h5><h5 style="text-align: center;">Cant:</h5><h5 style="text-align: center;">Precio:</h5>
+                            {% for item in lista_vta %}
+                                <!-- Mostrar el nombre, cantidad y precio de cada producto en el pedido -->
+                                <div style="grid-column: 1/-1; display: grid; grid-template-columns: repeat(3,1fr); margin: 2px 0;">
+                                    <div>
+                                        <h6 style="width: 8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item['nombre'] }}">{{ item['nombre'] }}</h6>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                                        <input type="number" class="cantidad" name="cantidades[]" value="{{ item['cantidad'] }}" style="width: 100%; text-align: center;">
+                                        <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <h6>${{ item['precio'] * item['cantidad'] }}</h6>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                <!-- Formulario para procesar la venta -->
+                    <form method="post" action="/procesar_venta" id="procesarVentaForm">
+                    <!-- Campos ocultos para cada producto en la venta -->
+                        {% for item in lista_vta %}
+                        <input type="hidden" name="productos[]" value="{{ item['id'] }}">
+                        <input type="hidden" name="cantidades[]" value="{{ item['cantidad'] }}">
+                        <input type="hidden" name="precios[]" value="{{ item['precio'] }}">
+                        {% endfor %}
+                        <div style="text-align: center;">
+                        <!-- Botón para procesar la compra sin confirmación -->
+                        <button type="submit" class="btn btn-success">Procesar Venta</button>
+                        <!-- Botón para cancelar la venta con SweetAlert2 -->
+                        <a href="#" class="btn btn-danger" onclick="confirmarCancelarVenta()">Cancelar Venta</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script de SweetAlert2 para confirmar procesar venta y cancelar venta -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmarProcesarVenta() {
+        Swal.fire({
+            title: '¿Estás seguro de realizar la venta?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, procesar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                document.getElementById('procesarVentaForm').submit();
+            }
+        });
+    }
+
+    function confirmarCancelarVenta() {
+        Swal.fire({
+            title: '¿Estás seguro de cancelar la venta?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, redirigir o ejecutar la acción de cancelar
+                window.location.href = "/cancelar_venta_in";
+            }
+        });
+    }
+</script>
+
+{% endblock %}
